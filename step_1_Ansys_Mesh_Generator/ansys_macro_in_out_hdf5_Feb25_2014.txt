@@ -1,0 +1,513 @@
+
+! =====================================
+! Code:        3D box Mesh Generator 
+! The University of Texas at Austin
+! MUSE Lab
+! Developer: Arash Fathi + Babak Poursartip + Sezgin
+
+! Start:       11 Jan 2013
+! Last update:  9 Oct 2013: merge & compress
+! Koshered (arash): July 18 2013 - October 25
+! HDF5 version
+! re-checked (arash) Feb 25 2014 with Babak's macro
+! =====================================
+
+/CONFIG,NRES,10000000
+/PREP7
+SELTOL,0.000001
+
+!---------------------------------
+! input (14: 20 node RD, 114: 20 node PML)
+!---------------------------------
+!FileName = 'PML_3D_Basu_1'
+
+*DIM,Dir,          STRING,128
+*DIM,FileName,     STRING,60
+*DIM,File,         STRING,128
+
+Dir(1,1)      = '/terra1/arash/3D/Ansys/'
+FileName(1,1) = 'PML_3D_Basu_HDF5'
+
+NDim     = 3
+RDEl     = 14
+PMLEl    = 114
+NNode    = 20
+NDOF     = 9
+
+Lx       = 1.2
+Ly       = 1.2
+Lz       = 0.2
+PMLLng   = 0.8
+ElSize   = 0.2
+
+p_p_x=+1.01
+p_m_x=-1.01
+p_p_y=+1.01
+p_m_y=-1.01
+
+!DRML     = -(Side/2-2*ElSize)
+!DRMR     = (Side/2-2*ElSize)
+!DRMB     = (Depth-2*ElSize)
+
+!----------------------------
+! Title
+!----------------------------
+! /title,Example 1
+
+File (1,1)= strcat(Dir(1,1),FileName(1,1))
+File (1,1)= strcat(File(1,1),'/')
+File (1,1)= strcat(File(1,1),FileName(1,1))
+File (1,1)= strcat(File(1,1),'_Ans')
+
+/title,%FileName(1,1)%
+
+!----------------------------
+! KeyPoints
+!----------------------------
+k,1 ,-(Lx+PMLLng),-(Ly+PMLLng),-(Lz+PMLLng)
+k,2 ,-(Lx       ),-(Ly+PMLLng),-(Lz+PMLLng)
+k,3 ,+(Lx       ),-(Ly+PMLLng),-(Lz+PMLLng)
+k,4 ,+(Lx+PMLLng),-(Ly+PMLLng),-(Lz+PMLLng)
+
+k,5 ,-(Lx+PMLLng),-(Ly+PMLLng),-(Lz      )
+k,6 ,-(Lx       ),-(Ly+PMLLng),-(Lz      )
+k,7 ,+(Lx       ),-(Ly+PMLLng),-(Lz      )
+k,8 ,+(Lx+PMLLng),-(Ly+PMLLng),-(Lz      )
+
+k,9 ,-(Lx+PMLLng),-(Ly+PMLLng),0
+k,10,-(Lx       ),-(Ly+PMLLng),0
+k,11,+(Lx       ),-(Ly+PMLLng),0
+k,12,+(Lx+PMLLng),-(Ly+PMLLng),0
+
+
+k,13,-(Lx+PMLLng),-(Ly       ),-(Lz+PMLLng)
+k,14,-(Lx       ),-(Ly       ),-(Lz+PMLLng)
+k,15,+(Lx       ),-(Ly       ),-(Lz+PMLLng)
+k,16,+(Lx+PMLLng),-(Ly       ),-(Lz+PMLLng)
+
+k,17,-(Lx+PMLLng),-(Ly       ),-(Lz       )
+k,18,-(Lx       ),-(Ly       ),-(Lz       )
+k,19,+(Lx       ),-(Ly       ),-(Lz       )
+k,20,+(Lx+PMLLng),-(Ly       ),-(Lz       )
+
+k,21,-(Lx+PMLLng),-(Ly       ),0
+k,22,-(Lx       ),-(Ly       ),0
+k,23,+(Lx       ),-(Ly       ),0
+k,24,+(Lx+PMLLng),-(Ly       ),0
+
+
+
+k,25,-(Lx+PMLLng),+(Ly       ),-(Lz+PMLLng)
+k,26,-(Lx       ),+(Ly       ),-(Lz+PMLLng)
+k,27,+(Lx       ),+(Ly       ),-(Lz+PMLLng)
+k,28,+(Lx+PMLLng),+(Ly       ),-(Lz+PMLLng)
+
+k,29,-(Lx+PMLLng),+(Ly       ),-(Lz       )
+k,30,-(Lx       ),+(Ly       ),-(Lz       )
+k,31,+(Lx       ),+(Ly       ),-(Lz       )
+k,32,+(Lx+PMLLng),+(Ly       ),-(Lz       )
+
+k,33,-(Lx+PMLLng),+(Ly       ),0
+k,34,-(Lx       ),+(Ly       ),0
+k,35,+(Lx       ),+(Ly       ),0
+k,36,+(Lx+PMLLng),+(Ly       ),0
+
+k,37,-(Lx+PMLLng),+(Ly+PMLLng),-(Lz+PMLLng)
+k,38,-(Lx       ),+(Ly+PMLLng),-(Lz+PMLLng)
+k,39,+(Lx       ),+(Ly+PMLLng),-(Lz+PMLLng)
+k,40,+(Lx+PMLLng),+(Ly+PMLLng),-(Lz+PMLLng)
+
+k,41,-(Lx+PMLLng),+(Ly+PMLLng),-(Lz       )
+k,42,-(Lx       ),+(Ly+PMLLng),-(Lz       )
+k,43,+(Lx       ),+(Ly+PMLLng),-(Lz       )
+k,44,+(Lx+PMLLng),+(Ly+PMLLng),-(Lz       )
+
+k,45,-(Lx+PMLLng),+(Ly+PMLLng),0
+k,46,-(Lx       ),+(Ly+PMLLng),0
+k,47,+(Lx       ),+(Ly+PMLLng),0
+k,48,+(Lx+PMLLng),+(Ly+PMLLng),0
+
+!----------------------------
+! blocks
+!----------------------------
+v,1,2,14,13,5,6,18,17
+v,2,3,15,14,6,7,19,18
+v,3,4,16,15,7,8,20,19
+
+v,5,6,18,17,9,10,22,21
+v,6,7,19,18,10,11,23,22
+v,7,8,20,19,11,12,24,23
+
+v,13,14,26,25,17,18,30,29
+v,14,15,27,26,18,19,31,30
+v,15,16,28,27,19,20,32,31
+
+v,17,18,30,29,21,22,34,33
+v,18,19,31,30,22,23,35,34
+v,19,20,32,31,23,24,36,35
+
+v,25,26,38,37,29,30,42,41
+v,26,27,39,38,30,31,43,42
+v,27,28,40,39,31,32,44,43
+
+v,29,30,42,41,33,34,46,45
+v,30,31,43,42,34,35,47,46
+v,31,32,44,43,35,36,48,47
+
+!----------------------------
+! Element Type
+!----------------------------
+
+ET,1,SOLID95
+ET,2,SOLID95
+
+!----------------------------
+! Material Type
+!----------------------------
+
+MP,DENS,1,1000
+MP,EX,1,178200
+MP,PRXY,1,0.2
+
+MP,DENS,2,2000
+MP,EX,2,110
+MP,PRXY,2,0.2
+
+
+
+!----------------------------
+! Mesh 
+!----------------------------
+
+
+ESIZE,ElSize,0,  
+MSHAPE,0,3D 
+MSHKEY,1
+
+TYPE,1   
+MAT,1
+VSel,S,VOLU,,11,11,1
+VMesh,All
+
+TYPE,2   
+MAT,2
+VSel,INVE
+VMesh,All
+
+!----------------------------
+! Applying Constraints
+!----------------------------
+
+NSEL,ALL
+
+! Selecting nodes on the boundary
+NSEL,S,LOC,X,-(Lx+PMLLng)-0.00001*ElSize,-(Lx+PMLLng)+0.00001*ElSize
+NSEL,A,LOC,X,+(Lx+PMLLng)-0.00001*ElSize,+(Lx+PMLLng)+0.00001*ElSize
+
+NSEL,A,LOC,Y,-(Ly+PMLLng)-0.00001*ElSize,-(Ly+PMLLng)+0.00001*ElSize
+NSEL,A,LOC,Y,+(Ly+PMLLng)-0.00001*ElSize,+(Ly+PMLLng)+0.00001*ElSize
+
+NSEL,A,LOC,Z,-(Lz+PMLLng)-0.00001*ElSize,-(Lz+PMLLng)+0.00001*ElSize
+
+D,ALL,UX,0
+D,ALL,UY,0
+D,ALL,UZ,0
+
+
+!---------------------------------
+! apply loads 
+!---------------------------------
+!---------------------------------
+! Input parameters (loads) 
+!---------------------------------
+
+
+nsel,s,loc,z,0
+nsel,r,loc,x,p_m_x,p_p_x
+nsel,r,loc,y,p_m_y,p_p_y
+SF,ALL,PRES,10
+
+
+!---------------------------------
+! Merge and compress nodes
+!---------------------------------
+NUMMRG,NODE, , , ,LOW
+NUMCMP,NODE 
+
+
+!---------------------------------
+! End the code
+!---------------------------------
+FINISH
+
+!======================================================================================================================================================================================================
+
+
+!---------------------------------
+! Select the model
+!---------------------------------
+
+/prep7
+ALLSEL
+
+
+!---------------------------------
+! Node coordinates 
+! print node#, x, y
+!---------------------------------
+
+*CFOPEN, File(1,1), XYZ
+NSEL,ALL
+*GET,NJ,NODE,,COUNT
+  *Do, ij,1,NJ
+    *GET,xval,NODE,ij,LOC,X
+    *GET,yval,NODE,ij,LOC,Y
+    *GET,zval,NODE,ij,LOC,Z
+    *VWRITE,ij,xval,yval,zval
+    (1F19.0,TL1,'  ',1F14.6,'  ',1F14.6,'  ',1F14.6)
+  *ENDDO
+*CFCLOS	
+
+
+!---------------------------------
+! Element connectivities
+! Element#, I,J,K,L,M,N,O,P
+!---------------------------------
+
+*CFOPEN, File(1,1), Cnn
+NSEL,ALL
+ESEL,ALL
+*GET,NJ,NODE,,COUNT
+*DIM,INOD1,ARRAY,NNode-8
+*DIM,INOD2,ARRAY,8
+*DIM,CornerNodeMapping,ARRAY,NJ
+*GET,NEL,ELEM,,COUNT
+
+NJCorner=0
+  *Do,INode,1,NJ
+    CornerNodeMapping(INode)=0
+  *EndDo
+
+  *Do, IEl,1,NEL
+    *GET,EType,ELEM,IEl,ATTR,TYPE
+    *GET,EMat,ELEM,IEl,ATTR,MAT
+
+      *Do,inode,1,NNode-8
+        INOD1(inode,1) = NELEM(IEl,inode)
+      *EndDo
+
+      *Do,inode,1,4
+        INOD2(inode,1) = NELEM(IEl,inode+16)
+      *EndDo
+
+      *Do,inode,1,4
+        INOD2(inode+4,1) = NELEM(IEl,inode+12)
+      *EndDo
+
+      ! computing number of corner nodes
+      *DO,inode,1,8
+        CNode = NELEM(IEl,inode)
+          *If,CornerNodeMapping(CNode),eq,0,Then
+            NJCorner = NJCorner +1
+            CornerNodeMapping(CNode) = NJCorner
+          *EndIf
+      *EndDo
+
+      *IF,EType,eq,1,THEN
+        *VWRITE,iel,INOD1(1,1),INOD1(2,1),INOD1(3,1),INOD1(4,1),INOD1(5,1),INOD1(6,1),INOD1(7,1),INOD1(8,1),INOD1(9,1),INOD1(10,1),INOD1(11,1),INOD1(12,1),EMat,RDEl,0
+        (16F10.0)
+        *VWRITE,INOD2(1,1),INOD2(2,1),INOD2(3,1),INOD2(4,1),INOD2(5,1),INOD2(6,1),INOD2(7,1),INOD2(8,1)
+        (8F10.0)
+      *Else
+        *VWRITE,iel,INOD1(1,1),INOD1(2,1),INOD1(3,1),INOD1(4,1),INOD1(5,1),INOD1(6,1),INOD1(7,1),INOD1(8,1),INOD1(9,1),INOD1(10,1),INOD1(11,1),INOD1(12,1),EMat,PMLEl,0
+        (16F10.0)
+        *VWRITE,INOD2(1,1),INOD2(2,1),INOD2(3,1),INOD2(4,1),INOD2(5,1),INOD2(6,1),INOD2(7,1),INOD2(8,1)
+        (8F10.0)
+      *EndIF  
+
+  *ENDDO
+*CFCLOS
+
+
+
+!---------------------------------
+! Element constraints
+! Node#, NDOF
+!---------------------------------
+
+NSEL,ALL
+ESEL,ALL
+*GET,NJ,NODE,,COUNT
+ESel,S,Type,,2,2,1,1
+NSLE,S
+
+*CFOPEN, File(1,1), Cnt
+
+D1  = 0
+D2  = 0
+D3  = 0
+S1  = 0
+S2  = 0
+S3  = 0
+S12 = 0
+S23 = 0
+S31 = 0
+
+  *Do, i,1,NJ
+    *GET,NSELECT,NODE,i,NSEL
+      *if,NSelect,eq,1,Then
+        *GET,ConstX,NODE,i,D,UX
+        *GET,ConstY,NODE,i,D,UY
+        *GET,ConstZ,NODE,i,D,UZ
+        *GET,zval,NODE,i,LOC,Z    
+
+          *If,ConstX,eq,0,Then
+            D1=1
+          *Else
+            D1=0
+          *EndIf
+
+          *If,ConstY,eq,0,Then
+            D2=1
+          *Else
+            D2=0
+          *EndIf
+
+          *If,ConstZ,eq,0,Then
+            D3=1
+          *Else
+            D3=0
+          *EndIf
+
+! DO NOT APPLY TRACTION FREE BOUNDARY CONDITION
+!------------------------------------------------
+!          ! Traction Free on the surface
+!          *If,zval,le,Tol,and,zval,ge,-Tol,Then
+!            S3  = 1
+!            S23 = 1
+!            S31 = 1
+!          *Else
+!            S3  = 0
+!            S23 = 0
+!            S31 = 0
+!          *EndIf
+
+
+
+        *VWRITE,i,D1,D2,D3,S1,S2,S3,S12,S23,S31
+        (1F19.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,' ')
+
+      *EndIf
+  *ENDDO
+
+
+
+NSEL,INVE   
+D1  = 0
+D2  = 0
+D3  = 0
+S1  = 1
+S2  = 1
+S3  = 1
+S12 = 1
+S23 = 1
+S31 = 1
+
+  *Do, i,1,NJ
+    *GET,NSELECT,NODE,i,NSEL
+      *if,NSelect,eq,1,Then
+        *GET,ConstX,NODE,i,D,UX
+        *GET,ConstY,NODE,i,D,UY
+        *GET,ConstZ,NODE,i,D,UZ        
+
+          *If,ConstX,eq,0,Then
+            D1=1
+          *Else
+            D1=0
+          *EndIf
+
+          *If,ConstY,eq,0,Then
+            D2=1
+          *Else
+            D2=0
+          *EndIf
+
+          *If,ConstZ,eq,0,Then
+            D3=1
+          *Else
+            D3=0
+          *EndIf
+
+        *VWRITE,i,D1,D2,D3,S1,S2,S3,S12,S23,S31
+        (1F19.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,' ')
+
+      *EndIf
+  *ENDDO
+
+*CFCLOS
+
+!---------------------------------
+! print load data
+!---------------------------------
+ALLSEL
+*CFOPEN, File(1,1), LOAD
+
+   ESEL,S,SFE,PRES,1,100
+   *GET,ldelems,ELEM,,COUNT
+   *VWRITE,ldelems
+   (1X,F13.0)
+   myel=3
+   *DO,i,1,ldelems
+      myel=ELNEXT(myel)
+      *DO,fkey,6,6
+        *GET,fval,ELEM,myel,PRES,fkey
+         *IF,fval,NE,0,THEN
+            *VWRITE,myel,fkey
+            (1X,3F13.0)
+         *ENDIF
+         fval=0
+      *ENDDO
+   *ENDDO
+
+
+!---------------------------------
+! Information
+!---------------------------------
+
+*CFOPEN, File(1,1), info
+NSEL,ALL
+ESEL,ALL
+
+*GET,NJ,NODE,,COUNT
+*GET,NEL,ELEM,,COUNT
+
+*VWRITE,'NEl:  ',NEl
+(A6,1F20.0,TL1,' ')
+
+*VWRITE,'NJ:   ',NJ
+(A6,1F20.0,TL1,' ')
+
+*VWRITE,'NJCorner:   ',NJCorner
+(A14,1F20.0,TL1,' ')
+
+*VWRITE,'NNBndry DRM:  ',NNBndry_DRM
+(A15,1F20.0,TL1,' ')
+
+*VWRITE,'NNLayer DRM:  ',NNLayer_DRM
+(A15,1F20.0,TL1,' ')
+
+*VWRITE,'NEL DRM:',NEL_DRM
+(A8,1F20.0,TL1,' ')
+
+*VWRITE,'PML boundaries:',-(Lx+PMLLng),+(Lx+PMLLng),-(Ly+PMLLng),+(Ly+PMLLng),(Lz+PMLLng)
+(A17,5F20.4)
+
+*VWRITE,'PML Limits',-Lx,+Lx,-Ly,Ly,Lz
+(A12,5F20.4)
+*VWRITE,'PML Length',PMLLng
+(A12,5F20.4)
+
+*VWRITE,'NNDH:   ',NJ_Sur
+(A10,1F20.0)
+
+*CFCLOS

@@ -1,0 +1,1067 @@
+! =====================================
+! Code:        3D box Mesh Generator 
+! The University of Texas at Austin
+! MUSE Lab
+! Developer: Arash Fathi + Babak Poursartip + Sezgin
+
+! Start:       11 Jan 2013
+! Last update: 11 Jan 2013
+! =====================================
+
+/CONFIG,NRES,10000000
+/PREP7
+SELTOL,0.000001
+
+!---------------------------------
+! input
+!---------------------------------
+
+*DIM,Dir,          STRING,128
+*DIM,FileName,     STRING,60
+*DIM,File,         STRING,128
+
+Dir(1,1)      = '/terra/babak/My_Folder/Thesis/Data/Input/PIC/3D/Pyramid/'
+FileName(1,1) = 'P_A45_H100_El10'
+NDim     = 3
+RDEl     = 14
+PMLEl    = 114
+NNode    = 20
+NDOF     = 9
+
+Height   = 100
+!tan(45) = 1
+!Base    = 2*Height/ 0.267949192431123
+Base    = 2*Height/1
+Lx       = 300
+Ly       = 300
+Lz       = 300
+PMLLng   = 60
+ElSize   = 10
+
+DRMxL     = -(Lx+Base/2-2*ElSize)
+DRMxR     =  (Lx+Base/2-2*ElSize)
+DRMyL     = -(Ly+Base/2-2*ElSize)
+DRMyR     =  (Ly+Base/2-2*ElSize)
+DRMzB     =  (Lz       -2*ElSize)
+
+!----------------------------
+! Title
+!----------------------------
+File (1,1)= strcat(Dir(1,1),FileName(1,1))
+File (1,1)= strcat(File(1,1),'/')
+File (1,1)= strcat(File(1,1),FileName(1,1))
+File (1,1)= strcat(File(1,1),'_Ans')
+
+/title,%FileName(1,1)%
+
+!----------------------------
+! KeyPoints
+!----------------------------
+k,1 ,-(Lx+Base/2+PMLLng),-(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,2 ,-(Lx+Base/2       ),-(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,3 ,DRMxL              ,-(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,4 ,-(Base/2          ),-(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,5 ,+(Base/2          ),-(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,6 ,DRMxR              ,-(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,7 ,+(Lx+Base/2       ),-(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,8 ,+(Lx+Base/2+PMLLng),-(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+
+k,9 ,-(Lx+Base/2+PMLLng),-(Ly+Base/2+PMLLng),+(Lz       )
+k,10,-(Lx+Base/2       ),-(Ly+Base/2+PMLLng),+(Lz       )
+k,11,DRMxL              ,-(Ly+Base/2+PMLLng),+(Lz       )
+k,12,-(Base/2          ),-(Ly+Base/2+PMLLng),+(Lz       )
+k,13,+(Base/2          ),-(Ly+Base/2+PMLLng),+(Lz       )
+k,14,DRMxR              ,-(Ly+Base/2+PMLLng),+(Lz       )
+k,15,+(Lx+Base/2       ),-(Ly+Base/2+PMLLng),+(Lz       )
+k,16,+(Lx+Base/2+PMLLng),-(Ly+Base/2+PMLLng),+(Lz       )
+
+k,17,-(Lx+Base/2+PMLLng),-(Ly+Base/2+PMLLng),+(DRMzB    )
+k,18,-(Lx+Base/2       ),-(Ly+Base/2+PMLLng),+(DRMzB    )
+k,19,DRMxL              ,-(Ly+Base/2+PMLLng),+(DRMzB    )
+k,20,-(Base/2          ),-(Ly+Base/2+PMLLng),+(DRMzB    )
+k,21,+(Base/2          ),-(Ly+Base/2+PMLLng),+(DRMzB    )
+k,22,DRMxR              ,-(Ly+Base/2+PMLLng),+(DRMzB    )
+k,23,+(Lx+Base/2       ),-(Ly+Base/2+PMLLng),+(DRMzB    )
+k,24,+(Lx+Base/2+PMLLng),-(Ly+Base/2+PMLLng),+(DRMzB    )
+
+k,25,-(Lx+Base/2+PMLLng),-(Ly+Base/2+PMLLng),
+k,26,-(Lx+Base/2       ),-(Ly+Base/2+PMLLng),
+k,27,DRMxL              ,-(Ly+Base/2+PMLLng),
+k,28,-(Base/2          ),-(Ly+Base/2+PMLLng),
+k,29,+(Base/2          ),-(Ly+Base/2+PMLLng),
+k,30,DRMxR              ,-(Ly+Base/2+PMLLng),
+k,31,+(Lx+Base/2       ),-(Ly+Base/2+PMLLng),
+k,32,+(Lx+Base/2+PMLLng),-(Ly+Base/2+PMLLng),
+
+k,33,-(Lx+Base/2+PMLLng),-(Ly+Base/2       ),+(Lz+PMLLng)
+k,34,-(Lx+Base/2       ),-(Ly+Base/2       ),+(Lz+PMLLng)
+k,35,DRMxL              ,-(Ly+Base/2       ),+(Lz+PMLLng)
+k,36,-(Base/2          ),-(Ly+Base/2       ),+(Lz+PMLLng)
+k,37,+(Base/2          ),-(Ly+Base/2       ),+(Lz+PMLLng)
+k,38,DRMxR              ,-(Ly+Base/2       ),+(Lz+PMLLng)
+k,39,+(Lx+Base/2       ),-(Ly+Base/2       ),+(Lz+PMLLng)
+k,40,+(Lx+Base/2+PMLLng),-(Ly+Base/2       ),+(Lz+PMLLng)
+
+k,41,-(Lx+Base/2+PMLLng),-(Ly+Base/2       ),+(Lz       )
+k,42,-(Lx+Base/2       ),-(Ly+Base/2       ),+(Lz       )
+k,43,DRMxL              ,-(Ly+Base/2       ),+(Lz       )
+k,44,-(Base/2          ),-(Ly+Base/2       ),+(Lz       )
+k,45,+(Base/2          ),-(Ly+Base/2       ),+(Lz       )
+k,46,DRMxR              ,-(Ly+Base/2       ),+(Lz       )
+k,47,+(Lx+Base/2       ),-(Ly+Base/2       ),+(Lz       )
+k,48,+(Lx+Base/2+PMLLng),-(Ly+Base/2       ),+(Lz       )
+
+k,49,-(Lx+Base/2+PMLLng),-(Ly+Base/2       ),+(DRMzB    )
+k,50,-(Lx+Base/2       ),-(Ly+Base/2       ),+(DRMzB    )
+k,51,DRMxL              ,-(Ly+Base/2       ),+(DRMzB    )
+k,52,-(Base/2          ),-(Ly+Base/2       ),+(DRMzB    )
+k,53,+(Base/2          ),-(Ly+Base/2       ),+(DRMzB    )
+k,54,DRMxR              ,-(Ly+Base/2       ),+(DRMzB    )
+k,55,+(Lx+Base/2       ),-(Ly+Base/2       ),+(DRMzB    )
+k,56,+(Lx+Base/2+PMLLng),-(Ly+Base/2       ),+(DRMzB    )
+
+k,57,-(Lx+Base/2+PMLLng),-(Ly+Base/2       ),
+k,58,-(Lx+Base/2       ),-(Ly+Base/2       ),
+k,59,DRMxL              ,-(Ly+Base/2       ),
+k,60,-(Base/2          ),-(Ly+Base/2       ),
+k,61,+(Base/2          ),-(Ly+Base/2       ),
+k,62,DRMxR              ,-(Ly+Base/2       ),
+k,63,+(Lx+Base/2       ),-(Ly+Base/2       ),
+k,64,+(Lx+Base/2+PMLLng),-(Ly+Base/2       ),
+
+k,65,-(Lx+Base/2+PMLLng),+(DRMyL           ),+(Lz+PMLLng)
+k,66,-(Lx+Base/2       ),+(DRMyL           ),+(Lz+PMLLng)
+k,67,DRMxL              ,+(DRMyL           ),+(Lz+PMLLng)
+k,68,-(Base/2          ),+(DRMyL           ),+(Lz+PMLLng)
+k,69,+(Base/2          ),+(DRMyL           ),+(Lz+PMLLng)
+k,70,DRMxR              ,+(DRMyL           ),+(Lz+PMLLng)
+k,71,+(Lx+Base/2       ),+(DRMyL           ),+(Lz+PMLLng)
+k,72,+(Lx+Base/2+PMLLng),+(DRMyL           ),+(Lz+PMLLng)
+
+k,73,-(Lx+Base/2+PMLLng),+(DRMyL           ),+(Lz       )
+k,74,-(Lx+Base/2       ),+(DRMyL           ),+(Lz       )
+k,75,DRMxL              ,+(DRMyL           ),+(Lz       )
+k,76,-(Base/2          ),+(DRMyL           ),+(Lz       )
+k,77,+(Base/2          ),+(DRMyL           ),+(Lz       )
+k,78,DRMxR              ,+(DRMyL           ),+(Lz       )
+k,79,+(Lx+Base/2       ),+(DRMyL           ),+(Lz       )
+k,80,+(Lx+Base/2+PMLLng),+(DRMyL           ),+(Lz       )
+
+k,81,-(Lx+Base/2+PMLLng),+(DRMyL           ),+(DRMzB    )
+k,82,-(Lx+Base/2       ),+(DRMyL           ),+(DRMzB    )
+k,83,DRMxL              ,+(DRMyL           ),+(DRMzB    )
+k,84,-(Base/2          ),+(DRMyL           ),+(DRMzB    )
+k,85,+(Base/2          ),+(DRMyL           ),+(DRMzB    )
+k,86,DRMxR              ,+(DRMyL           ),+(DRMzB    )
+k,87,+(Lx+Base/2       ),+(DRMyL           ),+(DRMzB    )
+k,88,+(Lx+Base/2+PMLLng),+(DRMyL           ),+(DRMzB    )
+
+k,89,-(Lx+Base/2+PMLLng),+(DRMyL           ),
+k,90,-(Lx+Base/2       ),+(DRMyL           ),
+k,91,DRMxL              ,+(DRMyL           ),
+k,92,-(Base/2          ),+(DRMyL           ),
+k,93,+(Base/2          ),+(DRMyL           ),
+k,94,DRMxR              ,+(DRMyL           ),
+k,95,+(Lx+Base/2       ),+(DRMyL           ),
+k,96,+(Lx+Base/2+PMLLng),+(DRMyL           ),
+
+k,97,-(Lx+Base/2+PMLLng),-(   Base/2       ),+(Lz+PMLLng)
+k,98,-(Lx+Base/2       ),-(   Base/2       ),+(Lz+PMLLng)
+k,99,DRMxL              ,-(   Base/2       ),+(Lz+PMLLng)
+k,100,-(Base/2          ),-(   Base/2       ),+(Lz+PMLLng)
+k,101,+(Base/2          ),-(   Base/2       ),+(Lz+PMLLng)
+k,102,DRMxR              ,-(   Base/2       ),+(Lz+PMLLng)
+k,103,+(Lx+Base/2       ),-(   Base/2       ),+(Lz+PMLLng)
+k,104,+(Lx+Base/2+PMLLng),-(   Base/2       ),+(Lz+PMLLng)
+
+k,105,-(Lx+Base/2+PMLLng),-(   Base/2       ),+(Lz       )
+k,106,-(Lx+Base/2       ),-(   Base/2       ),+(Lz       )
+k,107,DRMxL              ,-(   Base/2       ),+(Lz       )
+k,108,-(Base/2          ),-(   Base/2       ),+(Lz       )
+k,109,+(Base/2          ),-(   Base/2       ),+(Lz       )
+k,110,DRMxR              ,-(   Base/2       ),+(Lz       )
+k,111,+(Lx+Base/2       ),-(   Base/2       ),+(Lz       )
+k,112,+(Lx+Base/2+PMLLng),-(   Base/2       ),+(Lz       )
+
+k,113,-(Lx+Base/2+PMLLng),-(   Base/2       ),+(DRMzB    )
+k,114,-(Lx+Base/2       ),-(   Base/2       ),+(DRMzB    )
+k,115,DRMxL              ,-(   Base/2       ),+(DRMzB    )
+k,116,-(Base/2          ),-(   Base/2       ),+(DRMzB    )
+k,117,+(Base/2          ),-(   Base/2       ),+(DRMzB    )
+k,118,DRMxR              ,-(   Base/2       ),+(DRMzB    )
+k,119,+(Lx+Base/2       ),-(   Base/2       ),+(DRMzB    )
+k,120,+(Lx+Base/2+PMLLng),-(   Base/2       ),+(DRMzB    )
+
+k,121,-(Lx+Base/2+PMLLng),-(   Base/2       ),
+k,122,-(Lx+Base/2       ),-(   Base/2       ),
+k,123,DRMxL              ,-(   Base/2       ),
+k,124,-(Base/2          ),-(   Base/2       ),
+k,125,+(Base/2          ),-(   Base/2       ),
+k,126,DRMxR              ,-(   Base/2       ),
+k,127,+(Lx+Base/2       ),-(   Base/2       ),
+k,128,+(Lx+Base/2+PMLLng),-(   Base/2       ),
+
+k,129,-(Lx+Base/2+PMLLng),+(   Base/2       ),+(Lz+PMLLng)
+k,130,-(Lx+Base/2       ),+(   Base/2       ),+(Lz+PMLLng)
+k,131,DRMxL              ,+(   Base/2       ),+(Lz+PMLLng)
+k,132,-(Base/2          ),+(   Base/2       ),+(Lz+PMLLng)
+k,133,+(Base/2          ),+(   Base/2       ),+(Lz+PMLLng)
+k,134,DRMxR              ,+(   Base/2       ),+(Lz+PMLLng)
+k,135,+(Lx+Base/2       ),+(   Base/2       ),+(Lz+PMLLng)
+k,136,+(Lx+Base/2+PMLLng),+(   Base/2       ),+(Lz+PMLLng)
+
+k,137,-(Lx+Base/2+PMLLng),+(   Base/2       ),+(Lz       )
+k,138,-(Lx+Base/2       ),+(   Base/2       ),+(Lz       )
+k,139,DRMxL              ,+(   Base/2       ),+(Lz       )
+k,140,-(Base/2          ),+(   Base/2       ),+(Lz       )
+k,141,+(Base/2          ),+(   Base/2       ),+(Lz       )
+k,142,DRMxR              ,+(   Base/2       ),+(Lz       )
+k,143,+(Lx+Base/2       ),+(   Base/2       ),+(Lz       )
+k,144,+(Lx+Base/2+PMLLng),+(   Base/2       ),+(Lz       )
+
+k,145,-(Lx+Base/2+PMLLng),+(   Base/2       ),+(DRMzB    )
+k,146,-(Lx+Base/2       ),+(   Base/2       ),+(DRMzB    )
+k,147,DRMxL              ,+(   Base/2       ),+(DRMzB    )
+k,148,-(Base/2          ),+(   Base/2       ),+(DRMzB    )
+k,149,+(Base/2          ),+(   Base/2       ),+(DRMzB    )
+k,150,DRMxR              ,+(   Base/2       ),+(DRMzB    )
+k,151,+(Lx+Base/2       ),+(   Base/2       ),+(DRMzB    )
+k,152,+(Lx+Base/2+PMLLng),+(   Base/2       ),+(DRMzB    )
+
+k,153,-(Lx+Base/2+PMLLng),+(   Base/2       ),
+k,154,-(Lx+Base/2       ),+(   Base/2       ),
+k,155,DRMxL              ,+(   Base/2       ),
+k,156,-(Base/2          ),+(   Base/2       ),
+k,157,+(Base/2          ),+(   Base/2       ),
+k,158,DRMxR              ,+(   Base/2       ),
+k,159,+(Lx+Base/2       ),+(   Base/2       ),
+k,160,+(Lx+Base/2+PMLLng),+(   Base/2       ),
+
+k,161,-(Lx+Base/2+PMLLng),+(DRMyR           ),+(Lz+PMLLng)
+k,162,-(Lx+Base/2       ),+(DRMyR           ),+(Lz+PMLLng)
+k,163,DRMxL              ,+(DRMyR           ),+(Lz+PMLLng)
+k,164,-(Base/2          ),+(DRMyR           ),+(Lz+PMLLng)
+k,165,+(Base/2          ),+(DRMyR           ),+(Lz+PMLLng)
+k,166,DRMxR              ,+(DRMyR           ),+(Lz+PMLLng)
+k,167,+(Lx+Base/2       ),+(DRMyR           ),+(Lz+PMLLng)
+k,168,+(Lx+Base/2+PMLLng),+(DRMyR           ),+(Lz+PMLLng)
+
+k,169,-(Lx+Base/2+PMLLng),+(DRMyR           ),+(Lz       )
+k,170,-(Lx+Base/2       ),+(DRMyR           ),+(Lz       )
+k,171,DRMxL              ,+(DRMyR           ),+(Lz       )
+k,172,-(Base/2          ),+(DRMyR           ),+(Lz       )
+k,173,+(Base/2          ),+(DRMyR           ),+(Lz       )
+k,174,DRMxR              ,+(DRMyR           ),+(Lz       )
+k,175,+(Lx+Base/2       ),+(DRMyR           ),+(Lz       )
+k,176,+(Lx+Base/2+PMLLng),+(DRMyR           ),+(Lz       )
+
+k,177,-(Lx+Base/2+PMLLng),+(DRMyR           ),+(DRMzB    )
+k,178,-(Lx+Base/2       ),+(DRMyR           ),+(DRMzB    )
+k,179,DRMxL              ,+(DRMyR           ),+(DRMzB    )
+k,180,-(Base/2          ),+(DRMyR           ),+(DRMzB    )
+k,181,+(Base/2          ),+(DRMyR           ),+(DRMzB    )
+k,182,DRMxR              ,+(DRMyR           ),+(DRMzB    )
+k,183,+(Lx+Base/2       ),+(DRMyR           ),+(DRMzB    )
+k,184,+(Lx+Base/2+PMLLng),+(DRMyR           ),+(DRMzB    )
+
+k,185,-(Lx+Base/2+PMLLng),+(DRMyR           ),
+k,186,-(Lx+Base/2       ),+(DRMyR           ),
+k,187,DRMxL              ,+(DRMyR           ),
+k,188,-(Base/2          ),+(DRMyR           ),
+k,189,+(Base/2          ),+(DRMyR           ),
+k,190,DRMxR              ,+(DRMyR           ),
+k,191,+(Lx+Base/2       ),+(DRMyR           ),
+k,192,+(Lx+Base/2+PMLLng),+(DRMyR           ),
+
+k,193,-(Lx+Base/2+PMLLng),+(Ly+Base/2       ),+(Lz+PMLLng)
+k,194,-(Lx+Base/2       ),+(Ly+Base/2       ),+(Lz+PMLLng)
+k,195,DRMxL              ,+(Ly+Base/2       ),+(Lz+PMLLng)
+k,196,-(Base/2          ),+(Ly+Base/2       ),+(Lz+PMLLng)
+k,197,+(Base/2          ),+(Ly+Base/2       ),+(Lz+PMLLng)
+k,198,DRMxR              ,+(Ly+Base/2       ),+(Lz+PMLLng)
+k,199,+(Lx+Base/2       ),+(Ly+Base/2       ),+(Lz+PMLLng)
+k,200,+(Lx+Base/2+PMLLng),+(Ly+Base/2       ),+(Lz+PMLLng)
+
+k,201,-(Lx+Base/2+PMLLng),+(Ly+Base/2       ),+(Lz       )
+k,202,-(Lx+Base/2       ),+(Ly+Base/2       ),+(Lz       )
+k,203,DRMxL              ,+(Ly+Base/2       ),+(Lz       )
+k,204,-(Base/2          ),+(Ly+Base/2       ),+(Lz       )
+k,205,+(Base/2          ),+(Ly+Base/2       ),+(Lz       )
+k,206,DRMxR              ,+(Ly+Base/2       ),+(Lz       )
+k,207,+(Lx+Base/2       ),+(Ly+Base/2       ),+(Lz       )
+k,208,+(Lx+Base/2+PMLLng),+(Ly+Base/2       ),+(Lz       )
+
+k,209,-(Lx+Base/2+PMLLng),+(Ly+Base/2       ),+(DRMzB    )
+k,210,-(Lx+Base/2       ),+(Ly+Base/2       ),+(DRMzB    )
+k,211,DRMxL              ,+(Ly+Base/2       ),+(DRMzB    )
+k,212,-(Base/2          ),+(Ly+Base/2       ),+(DRMzB    )
+k,213,+(Base/2          ),+(Ly+Base/2       ),+(DRMzB    )
+k,214,DRMxR              ,+(Ly+Base/2       ),+(DRMzB    )
+k,215,+(Lx+Base/2       ),+(Ly+Base/2       ),+(DRMzB    )
+k,216,+(Lx+Base/2+PMLLng),+(Ly+Base/2       ),+(DRMzB    )
+
+k,217,-(Lx+Base/2+PMLLng),+(Ly+Base/2       ),
+k,218,-(Lx+Base/2       ),+(Ly+Base/2       ),
+k,219,DRMxL              ,+(Ly+Base/2       ),
+k,220,-(Base/2          ),+(Ly+Base/2       ),
+k,221,+(Base/2          ),+(Ly+Base/2       ),
+k,222,DRMxR              ,+(Ly+Base/2       ),
+k,223,+(Lx+Base/2       ),+(Ly+Base/2       ),
+k,224,+(Lx+Base/2+PMLLng),+(Ly+Base/2       ),
+
+k,225,-(Lx+Base/2+PMLLng),+(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,226,-(Lx+Base/2       ),+(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,227,DRMxL              ,+(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,228,-(Base/2          ),+(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,229,+(Base/2          ),+(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,230,DRMxR              ,+(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,231,+(Lx+Base/2       ),+(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+k,232,+(Lx+Base/2+PMLLng),+(Ly+Base/2+PMLLng),+(Lz+PMLLng)
+
+k,233,-(Lx+Base/2+PMLLng),+(Ly+Base/2+PMLLng),+(Lz       )
+k,234,-(Lx+Base/2       ),+(Ly+Base/2+PMLLng),+(Lz       )
+k,235,DRMxL              ,+(Ly+Base/2+PMLLng),+(Lz       )
+k,236,-(Base/2          ),+(Ly+Base/2+PMLLng),+(Lz       )
+k,237,+(Base/2          ),+(Ly+Base/2+PMLLng),+(Lz       )
+k,238,DRMxR              ,+(Ly+Base/2+PMLLng),+(Lz       )
+k,239,+(Lx+Base/2       ),+(Ly+Base/2+PMLLng),+(Lz       )
+k,240,+(Lx+Base/2+PMLLng),+(Ly+Base/2+PMLLng),+(Lz       )
+
+k,241,-(Lx+Base/2+PMLLng),+(Ly+Base/2+PMLLng),+(DRMzB    )
+k,242,-(Lx+Base/2       ),+(Ly+Base/2+PMLLng),+(DRMzB    )
+k,243,DRMxL              ,+(Ly+Base/2+PMLLng),+(DRMzB    )
+k,244,-(Base/2          ),+(Ly+Base/2+PMLLng),+(DRMzB    )
+k,245,+(Base/2          ),+(Ly+Base/2+PMLLng),+(DRMzB    )
+k,246,DRMxR              ,+(Ly+Base/2+PMLLng),+(DRMzB    )
+k,247,+(Lx+Base/2       ),+(Ly+Base/2+PMLLng),+(DRMzB    )
+k,248,+(Lx+Base/2+PMLLng),+(Ly+Base/2+PMLLng),+(DRMzB    )
+
+k,249,-(Lx+Base/2+PMLLng),+(Ly+Base/2+PMLLng),
+k,250,-(Lx+Base/2       ),+(Ly+Base/2+PMLLng),
+k,251,DRMxL              ,+(Ly+Base/2+PMLLng),
+k,252,-(Base/2          ),+(Ly+Base/2+PMLLng),
+k,253,+(Base/2          ),+(Ly+Base/2+PMLLng),
+k,254,DRMxR              ,+(Ly+Base/2+PMLLng),
+k,255,+(Lx+Base/2       ),+(Ly+Base/2+PMLLng),
+k,256,+(Lx+Base/2+PMLLng),+(Ly+Base/2+PMLLng),
+
+k,257,,,-Height 
+
+/auto
+/replot
+
+
+!----------------------------
+! blocks
+!----------------------------
+v,1,2,34,33,9,10,42,41
+v,2,3,35,34,10,11,43,42
+v,3,4,36,35,11,12,44,43
+v,4,5,37,36,12,13,45,44
+v,5,6,38,37,13,14,46,45
+v,6,7,39,38,14,15,47,46
+v,7,8,40,39,15,16,48,47
+
+v,9,10,42,41,17,18,50,49
+v,10,11,43,42,18,19,51,50
+v,11,12,44,43,19,20,52,51
+v,12,13,45,44,20,21,53,52
+v,13,14,46,45,21,22,54,53
+v,14,15,47,46,22,23,55,54
+v,15,16,48,47,23,24,56,55
+
+v,17,18,50,49,25,26,58,57
+v,18,19,51,50,26,27,59,58
+v,19,20,52,51,27,28,60,59
+v,20,21,53,52,28,29,61,60
+v,21,22,54,53,29,30,62,61
+v,22,23,55,54,30,31,63,62
+v,23,24,56,55,31,32,64,63
+
+
+
+v,33,34,66,65,41,42,74,73
+v,34,35,67,66,42,43,75,74
+v,35,36,68,67,43,44,76,75
+v,36,37,69,68,44,45,77,76
+v,37,38,70,69,45,46,78,77
+v,38,39,71,70,46,47,79,78
+v,39,40,72,71,47,48,80,79
+
+v,41,42,74,73,49,50,82,81
+v,42,43,75,74,50,51,83,82
+v,43,44,76,75,51,52,84,83
+v,44,45,77,76,52,53,85,84
+v,45,46,78,77,53,54,86,85
+v,46,47,79,78,54,55,87,86
+v,47,48,80,79,55,56,88,87
+
+v,49,50,82,81,57,58,90,89
+v,50,51,83,82,58,59,91,90
+v,51,52,84,83,59,60,92,91
+v,52,53,85,84,60,61,93,92
+v,53,54,86,85,61,62,94,93
+v,54,55,87,86,62,63,95,94
+v,55,56,88,87,63,64,96,95
+
+
+
+
+v,65,66,98,97,73,74,106,105
+v,66,67,99,98,74,75,107,106
+v,67,68,100,99,75,76,108,107
+v,68,69,101,100,76,77,109,108
+v,69,70,102,101,77,78,110,109
+v,70,71,103,102,78,79,111,110
+v,71,72,104,103,79,80,112,111
+
+v,73,74,106,105,81,82,114,113
+v,74,75,107,106,82,83,115,114
+v,75,76,108,107,83,84,116,115
+v,76,77,109,108,84,85,117,116
+v,77,78,110,109,85,86,118,117
+v,78,79,111,110,86,87,119,118
+v,79,80,112,111,87,88,120,119
+
+v,81,82,114,113,89,90,122,121
+v,82,83,115,114,90,91,123,122
+v,83,84,116,115,91,92,124,123
+v,84,85,117,116,92,93,125,124
+v,85,86,118,117,93,94,126,125
+v,86,87,119,118,94,95,127,126
+v,87,88,120,119,95,96,128,127
+
+
+
+v,97,98,130,129,105,106,138,137
+v,98,99,131,130,106,107,139,138
+v,99,100,132,131,107,108,140,139
+
+v,100,101,132,108,109,140
+v,101,133,132,109,141,140
+
+v,101,102,134,133,109,110,142,141
+v,102,103,135,134,110,111,143,142
+v,103,104,136,135,111,112,144,143
+
+
+v,105,106,138,137,113,114,146,145
+v,106,107,139,138,114,115,147,146
+v,107,108,140,139,115,116,148,147
+
+v,108,109,140,116,117,148
+v,109,141,140,117,149,148
+
+v,109,110,142,141,117,118,150,149
+v,110,111,143,142,118,119,151,150
+v,111,112,144,143,119,120,152,151
+
+
+v,113,114,146,145,121,122,154,153
+v,114,115,147,146,122,123,155,154
+v,115,116,148,147,123,124,156,155
+
+v,116,117,148,124,125,156
+v,117,149,148,125,157,156
+
+v,117,118,150,149,125,126,158,157
+v,118,119,151,150,126,127,159,158
+v,119,120,152,151,127,128,160,159
+
+
+
+
+v,129,130,162,161,137,138,170,169
+v,130,131,163,162,138,139,171,170
+v,131,132,164,163,139,140,172,171
+v,132,133,165,164,140,141,173,172
+v,133,134,166,165,141,142,174,173
+v,134,135,167,166,142,143,175,174
+v,135,136,168,167,143,144,176,175
+
+v,137,138,170,169,145,146,178,177
+v,138,139,171,170,146,147,179,178
+v,139,140,172,171,147,148,180,179
+v,140,141,173,172,148,149,181,180
+v,141,142,174,173,149,150,182,181
+v,142,143,175,174,150,151,183,182
+v,143,144,176,175,151,152,184,183
+
+v,145,146,178,177,153,154,186,185
+v,146,147,179,178,154,155,187,186
+v,147,148,180,179,155,156,188,187
+v,148,149,181,180,156,157,189,188
+v,149,150,182,181,157,158,190,189
+v,150,151,183,182,158,159,191,190
+v,151,152,184,183,159,160,192,191
+
+
+
+
+v,161,162,194,193,169,170,202,201
+v,162,163,195,194,170,171,203,202
+v,163,164,196,195,171,172,204,203
+v,164,165,197,196,172,173,205,204
+v,165,166,198,197,173,174,206,205
+v,166,167,199,198,174,175,207,206
+v,167,168,200,199,175,176,208,207
+
+v,169,170,202,201,177,178,210,209
+v,170,171,203,202,178,179,211,210
+v,171,172,204,203,179,180,212,211
+v,172,173,205,204,180,181,213,212
+v,173,174,206,205,181,182,214,213
+v,174,175,207,206,182,183,215,214
+v,175,176,208,207,183,184,216,215
+
+v,177,178,210,209,185,186,218,217
+v,178,179,211,210,186,187,219,218
+v,179,180,212,211,187,188,220,219
+v,180,181,213,212,188,189,221,220
+v,181,182,214,213,189,190,222,221
+v,182,183,215,214,190,191,223,222
+v,183,184,216,215,191,192,224,223
+
+
+
+v,193,194,226,225,201,202,234,233
+v,194,195,227,226,202,203,235,234
+v,195,196,228,227,203,204,236,235
+v,196,197,229,228,204,205,237,236
+v,197,198,230,229,205,206,238,237
+v,198,199,231,230,206,207,239,238
+v,199,200,232,231,207,208,240,239
+
+v,201,202,234,233,209,210,242,241
+v,202,203,235,234,210,211,243,242
+v,203,204,236,235,211,212,244,243
+v,204,205,237,236,212,213,245,244
+v,205,206,238,237,213,214,246,245
+v,206,207,239,238,214,215,247,246
+v,207,208,240,239,215,216,248,247
+
+v,209,210,242,241,217,218,250,249
+v,210,211,243,242,218,219,251,250
+v,211,212,244,243,219,220,252,251
+v,212,213,245,244,220,221,253,252
+v,213,214,246,245,221,222,254,253
+v,214,215,247,246,222,223,255,254
+v,215,216,248,247,223,224,256,255
+
+
+
+v,124,125,156,257
+v,125,157,156,257
+
+
+/auto
+vplot
+/replot
+
+
+!----------------------------
+! Element Type
+!----------------------------
+
+ET,1,SOLID95
+ET,2,SOLID95
+
+!----------------------------
+! Material Type
+!----------------------------
+
+MP,DENS,1,1000
+MP,EX,1,178200
+MP,PRXY,1,0.2
+
+MP,DENS,2,2000
+MP,EX,2,110
+MP,PRXY,2,0.2
+
+
+!----------------------------
+! Mesh 
+!----------------------------
+
+ESIZE,ElSize,0,  
+MSHAPE,0,3D 
+MSHKEY,1
+
+! Regular domain
+TYPE,1   
+MAT,1
+VSel,S,VOLU,,1,29,1
+VSel,A,VOLU,,35,36,1
+VSel,A,VOLU,,42,50,1
+VSel,A,VOLU,,56,57,1
+VSel,A,VOLU,,63,72,1
+VSel,A,VOLU,,79,80,1
+VSel,A,VOLU,,87,95,1
+VSel,A,VOLU,,101,102,1
+VSel,A,VOLU,,108,116,1
+VSel,A,VOLU,,122,123,1
+VSel,A,VOLU,,129,150,1
+
+VSel,INVE
+VMesh,All
+
+TYPE,2   
+MAT,2
+VSel,INVE
+VMesh,All
+
+!----------------------------
+! Applying Constraints
+!----------------------------
+
+NSEL,ALL
+
+! Selecting nodes on the boundary
+NSEL,S,LOC,X,-(Lx+Base/2+PMLLng)+0.00001*ElSize,-(Lx+Base/2+PMLLng)-0.00001*ElSize
+NSEL,A,LOC,X,+(Lx+Base/2+PMLLng)-0.00001*ElSize,+(Lx+Base/2+PMLLng)+0.00001*ElSize
+
+NSEL,A,LOC,Y,-(Ly+Base/2+PMLLng)+0.00001*ElSize,-(Ly+Base/2+PMLLng)-0.00001*ElSize
+NSEL,A,LOC,Y,+(Ly+Base/2+PMLLng)-0.00001*ElSize,+(Ly+Base/2+PMLLng)+0.00001*ElSize
+
+NSEL,A,LOC,Z,+(Lz+PMLLng-0.00001*ElSize),+(Lz+PMLLng+0.00001*ElSize)
+
+D,ALL,UX,0
+D,ALL,UY,0
+D,ALL,UZ,0
+
+
+!---------------------------------
+! End of 	the code
+!---------------------------------
+
+FINISH
+
+!---------------------------------
+! Select the model
+!---------------------------------
+
+/prep7
+ALLSEL
+
+!---------------------------------
+! Node coordinates 
+! print node#, x, y
+!---------------------------------
+
+*CFOPEN, File(1,1), XYZ
+NSEL,ALL
+*GET,NJ,NODE,,COUNT
+  *Do, ij,1,NJ
+    *GET,xval,NODE,ij,LOC,X
+    *GET,yval,NODE,ij,LOC,Y
+    *GET,zval,NODE,ij,LOC,Z
+    *VWRITE,ij,xval,yval,zval
+    (1F19.0,TL1,'  ',1F14.6,'  ',1F14.6,'  ',1F14.6)
+  *ENDDO
+*CFCLOS	
+
+!---------------------------------
+! Element connectivities
+! Element#, I,J,K,L,M,N,O,P
+!---------------------------------
+
+*CFOPEN, File(1,1), Cnn
+NSEL,ALL
+ESEL,ALL
+*GET,NJ,NODE,,COUNT
+*DIM,INOD1,ARRAY,NNode-8
+*DIM,INOD2,ARRAY,8
+*DIM,CornerNodeMapping,ARRAY,NJ
+*GET,NEL,ELEM,,COUNT
+
+NJCorner=0
+  *Do,INode,1,NJ
+    CornerNodeMapping(INode)=0
+  *EndDo
+
+  *Do, IEl,1,NEL
+    *GET,EType,ELEM,IEl,ATTR,TYPE
+    *GET,EMat,ELEM,IEl,ATTR,MAT
+
+      *Do,inode,1,NNode-8
+        INOD1(inode,1) = NELEM(IEl,inode)
+      *EndDo
+
+      *Do,inode,1,4
+        INOD2(inode,1) = NELEM(IEl,inode+16)
+      *EndDo
+
+      *Do,inode,1,4
+        INOD2(inode+4,1) = NELEM(IEl,inode+12)
+      *EndDo
+
+      ! computing number of corner nodes
+      *DO,inode,1,8
+        CNode = NELEM(IEl,inode)
+          *If,CornerNodeMapping(CNode),eq,0,Then
+            NJCorner = NJCorner +1
+            CornerNodeMapping(CNode) = NJCorner
+          *EndIf
+      *EndDo
+
+
+      *IF,EType,eq,1,THEN
+        *VWRITE,iel,INOD1(1,1),INOD1(2,1),INOD1(3,1),INOD1(4,1),INOD1(5,1),INOD1(6,1),INOD1(7,1),INOD1(8,1),INOD1(9,1),INOD1(10,1),INOD1(11,1),INOD1(12,1),EMat,RDEl,0
+        (16F10.0)
+        *VWRITE,INOD2(1,1),INOD2(2,1),INOD2(3,1),INOD2(4,1),INOD2(5,1),INOD2(6,1),INOD2(7,1),INOD2(8,1)
+        (8F10.0)
+      *Else
+        *VWRITE,iel,INOD1(1,1),INOD1(2,1),INOD1(3,1),INOD1(4,1),INOD1(5,1),INOD1(6,1),INOD1(7,1),INOD1(8,1),INOD1(9,1),INOD1(10,1),INOD1(11,1),INOD1(12,1),EMat,PMLEl,0
+        (16F10.0)
+        *VWRITE,INOD2(1,1),INOD2(2,1),INOD2(3,1),INOD2(4,1),INOD2(5,1),INOD2(6,1),INOD2(7,1),INOD2(8,1)
+        (8F10.0)
+      *EndIF  
+
+  *ENDDO
+*CFCLOS
+
+!---------------------------------
+! Element constraints
+! Node#, NDOF
+!---------------------------------
+
+NSEL,ALL
+ESEL,ALL
+*GET,NJ,NODE,,COUNT
+ESel,S,Type,,2,2,1,1
+NSLE,S
+
+*CFOPEN, File(1,1), Cnt
+
+D1  = 0
+D2  = 0
+D3  = 0
+S1  = 0
+S2  = 0
+S3  = 0
+S12 = 0
+S23 = 0
+S31 = 0
+
+  *Do, i,1,NJ
+    *GET,NSELECT,NODE,i,NSEL
+      *if,NSelect,eq,1,Then
+        *GET,ConstX,NODE,i,D,UX
+        *GET,ConstY,NODE,i,D,UY
+        *GET,ConstZ,NODE,i,D,UZ
+        *GET,zval,NODE,i,LOC,Z
+        
+          *If,ConstX,eq,0,Then
+            D1=1
+          *Else
+            D1=0
+          *EndIf
+
+          *If,ConstY,eq,0,Then
+            D2=1
+          *Else
+            D2=0
+          *EndIf
+
+          *If,ConstZ,eq,0,Then
+            D3=1
+          *Else
+            D3=0
+          *EndIf
+
+          ! Traction Free on the surface
+          *If,zval,le,Tol,and,zval,ge,-Tol,Then
+            S3  = 1
+            S23 = 1
+            S31 = 1
+          *Else
+            S3  = 0
+            S23 = 0
+            S31 = 0
+          *EndIf
+
+        *VWRITE,i,D1,D2,D3,S1,S2,S3,S12,S23,S31
+        (1F19.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,' ')
+
+      *EndIf
+  *ENDDO
+
+NSEL,INVE   
+D1  = 0
+D2  = 0
+D3  = 0
+S1  = 1
+S2  = 1
+S3  = 1
+S12 = 1
+S23 = 1
+S31 = 1
+
+  *Do, i,1,NJ
+    *GET,NSELECT,NODE,i,NSEL
+      *if,NSelect,eq,1,Then
+        *GET,ConstX,NODE,i,D,UX
+        *GET,ConstY,NODE,i,D,UY
+        *GET,ConstZ,NODE,i,D,UZ        
+
+          *If,ConstX,eq,0,Then
+            D1=1
+          *Else
+            D1=0
+          *EndIf
+
+          *If,ConstY,eq,0,Then
+            D2=1
+          *Else
+            D2=0
+          *EndIf
+
+          *If,ConstZ,eq,0,Then
+            D3=1
+          *Else
+            D3=0
+          *EndIf
+
+        *VWRITE,i,D1,D2,D3,S1,S2,S3,S12,S23,S31
+        (1F19.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,'  ',1F2.0,TL1,' ')
+
+      *EndIf
+  *ENDDO
+
+*CFCLOS
+
+!----------------------------
+! DRM
+!----------------------------
+
+*CFOPEN, File(1,1), DRM
+
+NSEL,ALL
+*GET,NJ,NODE,,COUNT
+
+! Selecting nodes on the boundary
+NSEL,S,LOC,X,DRMxL-ElSize/2+0.001*ElSize,DRMxL+ElSize/2-0.001*ElSize
+NSEL,A,LOC,X,DRMxR-ElSize/2+0.001*ElSize,DRMxR+ElSize/2-0.001*ElSize
+NSEL,A,LOC,Y,DRMyL+ElSize/2-0.001*ElSize,DRMyL-ElSize/2+0.001*ElSize
+NSEL,A,LOC,Y,DRMyR-ElSize/2+0.001*ElSize,DRMyR+ElSize/2-0.001*ElSize
+NSEL,A,LOC,Z,DRMzB-ElSize/2+0.001*ElSize,DRMzB+ElSize/2-0.001*ElSize
+
+NSEL,U,LOC,Z,DRMzB+0.001*ElSize,Lz+PMLLng
+
+NSEL,U,LOC,X,-(Lx+Base/2+PMLLng),DRMxL-0.001*ElSize
+NSEL,U,LOC,X,DRMxR+0.001*ElSize,(Lx+Base/2+PMLLng)
+
+NSEL,U,LOC,Y,-(Ly+Base/2+PMLLng),DRMyL-0.001*ElSize
+NSEL,U,LOC,Y,DRMyR+0.001*ElSize,(Ly+Base/2+PMLLng)
+
+*GET,NNBndry_DRM,NODE,,COUNT
+
+! Writing Nodes on the boundary
+
+*VWRITE,'NNBndry_DRM:  ',NNBndry_DRM
+(A20,1F20.0)
+
+  *Do,ij,1,NJ
+    *GET,NSELECT,NODE,ij,NSEL
+      *if,NSelect,eq,1,Then
+        *VWRITE,ij
+        (F20.0)
+      *EndIf
+  *EndDo
+
+NSEL,ALL
+
+! Selecting nodes on the Neighbor layer
+NSEL,S,LOC,X,DRMxL-0.001*ElSize,DRMxL-0.001*ElSize-ElSize
+NSEL,A,LOC,X,DRMxR+0.001*ElSize,DRMxR+0.001*ElSize+ElSize
+
+NSEL,A,LOC,Y,DRMyL-0.001*ElSize,DRMyL-0.001*ElSize-ElSize
+NSEL,A,LOC,Y,DRMyR+0.001*ElSize,DRMyR+0.001*ElSize+ElSize
+
+NSEL,A,LOC,Z,DRMzB+0.001*ElSize,DRMzB+0.001*ElSize+ElSize
+
+NSEL,U,LOC,Z,DRMzB+ElSIZE+0.001*ElSize,Lz+PMLLng
+
+NSEL,U,LOC,X,DRMxL-ElSIZE-0.001*ElSize,-(Lx+Base/2+PMLLng)
+NSEL,U,LOC,X,DRMxR+ElSIZE+0.001*ElSize,(Lx+Base/2+PMLLng)
+
+NSEL,U,LOC,Y,DRMyL-ElSIZE-0.001*ElSize,-(Ly+Base/2+PMLLng)
+NSEL,U,LOC,Y,DRMyR+ElSIZE+0.001*ElSize,(Ly+Base/2+PMLLng)
+
+*GET,NNLayer_DRM,NODE,,COUNT
+
+! Writing Nodes on the neighbor
+
+*VWRITE,'NNLayer_DRM:  ',NNLayer_DRM
+(A20,1F20.0,TL1,' ')
+
+  *Do,ij,1,NJ
+    *GET,NSELECT,NODE,ij,NSEL
+      *if,NSelect,eq,1,Then
+        *VWRITE,ij
+        (F20.0)
+      *EndIf
+  *EndDo
+	
+*CFCLOS
+
+!----------------------------
+! DRM Elements
+!----------------------------
+
+*CFOPEN, File(1,1), DRMElm
+
+NSEL,ALL
+
+! Selecting nodes on the Neighbor layer
+NSEL,S,LOC,X,DRMxL-0.001*ElSize,DRMxL+0.001*ElSize-ElSize
+NSEL,A,LOC,X,DRMxR+0.001*ElSize,DRMxR-0.001*ElSize+ElSize
+
+NSEL,A,LOC,Y,DRMyL-0.001*ElSize,DRMyL+0.001*ElSize-ElSize
+NSEL,A,LOC,Y,DRMyR+0.001*ElSize,DRMyR-0.001*ElSize+ElSize
+
+NSEL,A,LOC,Z,DRMzB+0.001*ElSize,DRMzB-0.001*ElSize+ElSize
+
+NSEL,U,LOC,Z,DRMzB+ElSIZE-0.001*ElSize,Lz+PMLLng
+
+NSEL,U,LOC,X,DRMxL-ElSIZE+0.001*ElSize,-(Lx+Base/2+PMLLng)
+NSEL,U,LOC,X,DRMxR+ElSIZE-0.001*ElSize,(Lx+Base/2+PMLLng)
+
+NSEL,U,LOC,Y,DRMyL-ElSIZE+0.001*ElSize,-(Ly+Base/2+PMLLng)
+NSEL,U,LOC,Y,DRMyR+ElSIZE-0.001*ElSize,(Ly+Base/2+PMLLng)
+
+ESLN,S
+
+*GET,NEL_DRM,ELEM,,COUNT
+*VWRITE,'Number of Elements in DRM layer:',NEL_DRM
+(A33,1F20.0,TL1,' ')
+
+  *Do, IEl,1,NEL
+
+    *GET,ESELECT,Elem,IEL,ESEL
+
+      *IF,ESelect,eq,1,THEN
+        *VWRITE,iel
+        (1F20.0)
+      *EndIF  
+
+  *ENDDO
+*CFCLOS
+
+
+!---------------------------------
+! Nodes for history
+!---------------------------------
+
+*CFOPEN, File(1,1), nodes
+NSEL,ALL
+*GET,NJ,NODE,,COUNT
+
+LSel,S,Line,,292,292,1
+LSel,A,Line,,646,646,1
+LSel,A,Line,,648,648,1
+LSel,A,Line,,386,386,1
+NSLL,S,1
+
+*GET,Nj_sur,NODE,,COUNT
+
+counter =0
+*DIM,NodeSur,ARRAY,Nj_sur,2
+  *Do,ij,1,NJ
+    *GET,NSELECT,NODE,ij,NSEL
+      *if,NSelect,eq,1,Then
+        counter = counter +1
+        *GET,xval,NODE,ij,LOC,X
+	   NodeSur(counter,1)=ij
+	   NodeSur(counter,2)=xval
+      *EndIf
+  *EndDo
+
+check=1
+  *DoWhile,check	
+    check = -1
+    *Do,ij,1,NJ_Sur-1
+      *if,NodeSur(ij+1,2),lt,NodeSur(ij,2),then
+        check=1
+        temp=  NodeSur(ij,1)
+        NodeSur(ij,1) = NodeSur(ij+1,1)
+        NodeSur(ij+1,1) = temp
+        temp=  NodeSur(ij,2)
+        NodeSur(ij,2) = NodeSur(ij+1,2)
+        NodeSur(ij+1,2) = temp
+      *endif
+    *EndDo
+  *EndDo
+
+COUNTER = 0
+    *Do,ij,1,NJ_Sur,1
+	COUNTER = COUNTER + 1
+        node=NodeSur(ij,1)
+        location=NodeSur(ij,2)
+        *VWRITE,node,location
+        (1F20.0,TL1,'  ',1F20.8)
+!        *VWRITE,node
+!        (1F20.0)
+    *EndDo
+NJ_Sur = counter
+
+
+*CFCLOS
+
+
+!---------------------------------
+! Information
+!---------------------------------
+*CFOPEN, File(1,1), info
+NSEL,ALL
+ESEL,ALL
+
+*GET,NJ,NODE,,COUNT
+*GET,NEL,ELEM,,COUNT
+
+*VWRITE,'NEl:  ',NEl
+(A6,1F20.0,TL1,' ')
+
+*VWRITE,'NJ:   ',NJ
+(A6,1F20.0,TL1,' ')
+
+*VWRITE,'NJCorner:   ',NJCorner
+(A14,1F20.0,TL1,' ')
+
+*VWRITE,'NNBndry DRM:  ',NNBndry_DRM
+(A15,1F20.0,TL1,' ')
+
+*VWRITE,'NNLayer DRM:  ',NNLayer_DRM
+(A15,1F20.0,TL1,' ')
+
+*VWRITE,'NEL DRM:',NEL_DRM
+(A8,1F20.0,TL1,' ')
+
+*VWRITE,'PML boundaries:',-(Lx+Base/2+PMLLng),+(Lx+Base/2+PMLLng),-(Ly+Base/2+PMLLng),+(Ly+Base/2+PMLLng),(Lz+PMLLng)
+(A17,5F20.4)
+
+*VWRITE,'DRM boundaries:',DRMxL,DRMxR,DRMyL,DRMyR,DRMzB
+(A17,5F20.4)
+
+*VWRITE,'PML Limits',-Lx-Base/2,+Lx+Base/2,-Ly-Base/2,Ly+Base/2,Lz
+(A12,5F20.4)
+*VWRITE,'PML Length',PMLLng
+(A12,5F20.4)
+
+*VWRITE,'NNDH:   ',NJ_Sur
+(A10,1F20.0)
+
+*CFCLOS
+
+
+
+
+
+
+
+
+
+
+
+
+

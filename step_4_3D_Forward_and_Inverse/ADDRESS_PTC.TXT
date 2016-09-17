@@ -1,0 +1,28 @@
+Model INPUT FILE NAME: (.TXT)
+'Inversion_3D_Ex16_HDF5'
+NUMBER OF ANALYSIS TYPE:
+63   2
+INPUT DIRECTORY:
+'/terra1/arash/3D/Partitioned_Mesh'
+INTERNAL DIRECTORY:
+'/terra1/arash/3D/Partitioned_Mesh'
+OUTPUT DIRECTORY:
+'/terra1/arash/3D/Output'
+Analysis INPUT FILE NAME: (.TXT)
+'Inversion_3D_Ex16_HDF5'
+
+
+
+
+<<<<<  Analysis numbers   >>>>>
+PML
+stand imp 2D : 61
+spec  imp 2D : 62
+spec  exp 2D : 63
+spec  exp 3D : 69
+
+DRM
+spec  exp 2D : 66
+stand imp 2D : 64
+spec  exp 3D : 72
+
