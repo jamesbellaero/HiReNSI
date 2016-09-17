@@ -1,0 +1,169 @@
+=====================================================================================================================================================
+Notes to the new user of the 3D Forward and Inverse code:
+
+Here is my suggestion for a quick start:
+0) Read the IJNME and CMAME papers and make sure that you fully understand them.
+1) run the example on section 8.3 of the IJNME paper with spectral elements, and make sure that you can reproduce the results.
+2) run the example on section 4.4 of the CMAME paper and reproduce the results. You may just run the case without adding noise.
+
+You need the following software to run the code:
+1) PETSC 3.2 - for mesh partitioning
+2) PETSC 3.4 - for running the forward/inverse codes
+3) intel compiler 11.1 - Fortran compiler
+
+You may use different versions of the above software; however, in that case, some modifications may be necessary.
+
+=====================================================================================================================================================
+
+A. Steps to run the Forward code (this is the first example in the 3D inverse paper; here, and in the code, referred as example 14):
+
+=====================================================================================================================================================
+1. build mesh in Ansys
+\obelix\3D\Ansys\Inversion_3D_Ex14_HDF5\ansys_launcher\ansys_macro_in_out_hdf5.txt
+
+You need to modify this file to generate the mesh with ANSYS. You only need to change the following:
+line 24,25: folder & filename
+line 33-37: dimension & element size
+line 39-42: surface load area; define a rectangular region
+
+Then, read this file in ANSYS as a macro, and it generates output files.
+
+=====================================================================================================================================================
+2. generate model using spectral elements
+Make directory:
+\obelix\3D\Ansys\Inversion_3D_Ex14_HDF5\Model
+
+Copy all Ansys generated files in \Model. They are 20-noded elements. We need to process this and make it 27-noded elements.
+
+Goto:
+obelix\3D\HDF5\20to27
+
+See ADDRESS.TXT. You need to modify:
+line 2: model name. i.e. 'Inversion_3D_Ex14_HDF5'
+line 4: directory up to Ansys files. 
+line 14, 16, 18 (read from inf Ans file)
+line 22, 23, 25, 26, 28 (limits of the computational domain)
+
+first run this:
+ulimit -s unlimited
+
+now Compile and run the code:
+make main
+./main
+
+now you have a mesh based on spectral elements.
+
+=====================================================================================================================================================
+3. Partition the mesh using PIC in:
+obelix\3D\HDF5\PIC
+
+You need PETSC 3.2 to do this. If you use a different version of PETSC, it may fail. Later, for doing the computations, you need PETSC 3.4. So, you should install both versions of PETSC. 
+Use the 3.2 for partitioning, and 3.4 for computing. 
+In our computers, we put the PETSC 3.4 path in bachrc. When necessary, we use: export PETSC_DIR=/terra1/numerical_libraries/petsc-3.2-p6 and then run the partitioner.
+
+See ADDRESS_PIC.TXT. Modify:
+line 2
+line 6, 8 (already good)
+line 10: this is where your partitioned mesh will be built. You need to make the folder 'Partitioned_Mesh' yourself first.
+It only read 10 lines. The rest is just comments.
+
+------
+Go to \obelix\3D\Ansys\Inversion_3D_Ex14_HDF5\Model
+You need to make the Inversion_3D_Ex14_HDF5.txt file yourself. The rest have already been made in step 2.
+Open the .txt file
+change:
+line 8: NEL and NJ. these are # elements and # joints. You can find them in the .Inf file.
+line 18: # nodes that you want to record their displacements
+line 21: # elements that you want to apply surface traction on them
+line 25: number of partitions
+line 37: starting position of PML
+line 39: thickness of PML
+line 42-825(here) element numbers that you apply traction on their upper face (6)
+line 828 (here): node numbers that their displacements will be recorded.
+
+------
+Material properties are assigned to each node. For building test cases, with specific material profiles, please see PIC_Heterogeneous_Material.F90
+
+------
+Compile: make main
+run: ./main
+for cleaning, use make cln. Do not use make clean, or you will loose your files.
+
+to change material properties, see PIC_Heterogeneous_Material.F90 line 1213. This requires some work if you are dealing with complex profiles, but it is straightforward.
+
+=====================================================================================================================================================
+4. run the Forward code
+the code is in \miraculix\3D_Inverse
+
+This is both forward and inverse. Let's do forward only here.
+
+See ADDRESS_PTC.TXT
+Change:
+line 2
+line 6, 8 (already good)
+line 10 (already good). But you need to make a directory with name 'Output' there.
+line 12
+
+See Adjustments.F90
+line 25 is density * 1e-6. We also provide lambda and mu * 1e-6 in the mesh partitioner.
+line 76 and 77 are PML alpha0 and beta0 parameters. Cureful selection of these parameters are important. See examples in the IJNME paper.
+Keep alpha0 = 5, and beta0 = 0.8 max c_p as a rule of thumb if you have reasonable wave velocities.
+line 126, 127 time steps
+
+After modifying this, you should re-save Program_Main.F90, because adjustments.F90 is included here.
+
+uncomment lines 269, 270.
+the code will stop here. i.e., a forward analysis.
+
+Compile: make main
+run: mpiexec -np 16 ./main
+
+Comment regarding the include files in lines 259-264:
+4.1. Include 'IO_Parallel_hdf5.F90': this is necessary for the forward model
+4.2. Include 'Adjustments.F90': this helps you to change some of the input that you are importing from PIC in a dirty way.
+4.3. Include 'IO_Parallel_Inversion.F90': this is for inversion. You can comment it out when you are running a forward model. Indeed, you have to comment this out when running the forward code if you do not have the files related to the inverse code.
+4.4. Include 'PETSc_Global_Objects.F90': necessary for the forward code
+4.5. Include 'PETSc_Global_Objects_Inversion.F90': necessary for inversion. It also allocates memory for inversion. Comment this out if you are running forward only.
+4.5. Include 'Control_Problem_Operators.F90': pertains to the control problem for inversion. Comment out if you are running forward only.
+
+=====================================================================================================================================================
+5. run the Inverse code
+The forward and inverse codes are the same. You just need to uncomment the include files that I mentioned above (4.1-4.5) and re-compile the code. You also need to have generate the measured data at sensor locations by running the forward code. The forward code puts them in the appropriate folder, and no further modification is necessary if you want to commit an inverse crime; otherwise, you may want to add noise to them.
+
+I have commented within the code and everything should be self-evident to some extent. At iteration 1 of inversion, I am initializing Lambda amd Mu here:
+
+! 1- material properties in Fortran vectors (for solving the forward problem): also, already in place in PMat_Lambda & PMat_Mu
+  If ( Iter_begin == 1 ) Then
+    ! initial guess
+    Select Case (Control_Parameter)
+       Case ('Lambda')
+          PMat_Lambda = 80.01d0
+          ! read Mu from file (target)
+       Case ('Mu')
+          PMat_Mu     = 80.02d0
+          ! read Lambda from file (target)
+       Case ('Lambda_Mu')
+          ! simultaneous inversion
+          PMat_Lambda = 80.01d0
+          PMat_Mu     = 80.02d0
+    End Select
+  Else
+    ! Resume from the last save
+    Include'Resume_Inversion_Read_Material.F90'
+  End If
+
+You may want to use different values.
+
+There are other parameters that need to be adjusted in Adjustments.F90 after line 133. I have provided comments and it should be clear that what is needed. In particular, lets see this:
+
+! 4- iterations for inversion
+  Iter_begin            = 641
+  Iter_end              = 10000
+  MaxIter               = 10000
+
+This corresponds to a situation that you have already performed 641 inversion iterations, and now, you would like to use a load with another frequency range, and continue from there, i.e., 642, 643, .... If this is the beginning of your inversion, then you should use 1 instead of 641.
+
+=====================================================================================================================================================
+
+
+
