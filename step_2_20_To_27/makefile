@@ -2,7 +2,7 @@
 # makefile parallel
 
 F90    = ifort
-FFLAGS = -O3
+FFLAGS = -O2 
 
 OBJS   = ShapeFunc.o \
 		Copy.o \

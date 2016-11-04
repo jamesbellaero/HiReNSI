@@ -25,8 +25,8 @@ SELTOL,0.000001
 *DIM,FileName,     STRING,60
 *DIM,File,         STRING,128
 
-Dir(1,1)      = '/terra1/arash/3D/Ansys/'
-FileName(1,1) = 'PML_3D_Basu_HDF5'
+Dir(1,1)      = '/home/jamesbell/Research/Meshes/'
+FileName(1,1) = 'Mesh_Ans'
 
 NDim     = 3
 RDEl     = 14

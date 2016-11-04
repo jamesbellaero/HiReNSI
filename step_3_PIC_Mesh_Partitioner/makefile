@@ -16,7 +16,7 @@ info ::
 FFLAGS	    = -O3
 CPPFLAGS    = 
 FPPFLAGS    =
-LOCDIR      = /home/babak/Thesis/Program/Mesh_Partitioning
+LOCDIR      = home/jamesbell/Research/hirensi/step_3_PIC_Mesh_Partitioner
 
 SOURCESF    =     Parameters.o \
 		PIC_Convert.o \
@@ -54,7 +54,11 @@ include ${PETSC_DIR}/conf/rules
 
 main :  $(SOURCESF) chkopts
 	@echo Linking...
-	-${FLINKER} $(OBJSF) -o main *.o ${PETSC_KSP_LIB}
+	@echo ${SOURCESF}
+	@echo Relinking...
+	@echo ${OBJSF}
+	@echo Unlinking...
+	-${FLINKER}  $(OBJSF) -o main *.o ${PETSC_KSP_LIB}
 	@echo Done!
 
 include ${PETSC_DIR}/conf/test

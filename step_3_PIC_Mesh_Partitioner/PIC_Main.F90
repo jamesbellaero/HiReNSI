@@ -48,6 +48,7 @@ Implicit None ;
 #include "finclude/petscvec.h"
 #include "finclude/petscmat.h"
 #include "finclude/petscvec.h90"
+!#include "metis.h"
 
 ! ============================ PETSC Variables AND OBJECTS ==========================================================================================
 ! - PETSC OBJECTS -----------------------------------------------------------------------------------------------------------------------------------
@@ -117,14 +118,14 @@ Read(UN_ADR,*) OutDir ; ! Direction of the output file
 !#Write(*,"(' ENTER THE ADDRESS OF OUTPUT FILES : ',\)")
 !#Read(*,*)OutDir
 
-Model_InDir = TRIM(AdjustL (Model_InDir))//'/'//TRIM(AdjustL (ModelNAME))//'/'//TRIM(AdjustL ("Model")) ;
+Model_InDir = TRIM(AdjustL (Model_InDir)) ;
 
 Write(*,*)"Model_InDir: ", Model_InDir ;
 !Open ( 11, FILE = 'checkDir.txt', ERR =  1001, IOSTAT = IO_File, ACCESS = 'SEQUENTIAL', ACTION = 'READ', ASYNCHRONOUS = 'NO', BLANK = 'NULL', BLOCKSIZE = 0, DEFAULTFILE = TRIM(Model_InDir), DisPOSE = 'KEEP', FORM = 'FORMATTED', POSITION = 'ASIS', STATUS = 'unknown' ) ;
 
 ! - Input FILE --------------------------------------------------------------------------------------------------------------------------------------
 UnFile = UnInptMdl ;
-Open ( Unit = UnFile, FILE = TRIM(ModelName)//'.txt', ERR =  1001, IOSTAT = IO_File, ACCESS = 'SEQUENTIAL', ACTION = 'READ', ASYNCHRONOUS = 'NO', BLANK = 'NULL', BLOCKSIZE = 0, DEFAULTFILE = TRIM(Model_InDir), DisPOSE = 'KEEP', FORM = 'FORMATTED', POSITION = 'ASIS', STATUS = 'OLD' ) ;
+!Open ( Unit = UnFile, FILE = TRIM(ModelName)//'.txt', ERR =  1001, IOSTAT = IO_File, ACCESS = 'SEQUENTIAL', ACTION = 'READ', ASYNCHRONOUS = 'NO', BLANK = 'NULL', BLOCKSIZE = 0, DEFAULTFILE = TRIM(Model_InDir), DisPOSE = 'KEEP', FORM = 'FORMATTED', POSITION = 'ASIS', STATUS = 'OLD' ) ;
 
 ! - Input file for nodes' coordinates ---------------------------------------------------------------------------------------------------------------
 UnFile = UnInptXYZ ;
@@ -166,8 +167,8 @@ Directory = MakeDirQQ (TRIM(AdjustL (InlDir))//'/'//TRIM(AdjustL (ModelName))) ;
      WRITE (UnInf,*) 'Failed to create subdirectory' ;
   END IF ;
 
-OutDir = TRIM(AdjustL (OutDir))//'/'//TRIM(AdjustL (ModelName))//'/'//'Model' ;
-InlDir = TRIM(AdjustL (InlDir))//'/'//TRIM(AdjustL (ModelName)) ;
+OutDir = TRIM(AdjustL (OutDir))//'/'//'Model' ;
+InlDir = TRIM(AdjustL (InlDir));
 
 write (*,*)"Input Directory:     ",Model_InDir ;
 write (*,*)"Output Directory:    ",OutDir ;
@@ -559,8 +560,8 @@ UnFile =  UN_ADR ;
 Close ( Unit = UnFile, STATUS = 'KEEP', ERR = 1002, IOSTAT = IO_File ) ;
 
 ! - Closing Input FILE --------------------------------------------------------------------------------------------------------------------------------
-UnFile =  UnInptMdl ;
-Close ( Unit = UnFile, STATUS = 'KEEP', ERR = 1002, IOSTAT = IO_File ) ;
+!UnFile =  UnInptMdl ;
+!Close ( Unit = UnFile, STATUS = 'KEEP', ERR = 1002, IOSTAT = IO_File ) ;
 
 ! - Closing file for nodes' coordinates ---------------------------------------------------------------------------------------------------------------
 UnFile = UnInptXYZ ;

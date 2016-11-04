@@ -98,11 +98,11 @@ UnFile = UnInptMdl ;
 
 ! Basic Parameters for model
 Write(*,*)"  Reading Basic Parameters for model ..." ;
-Read (Unit = UnFile, FMT = "(3(I3,2X),1(I5,2X),6(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) NDOF, NDim, MaxNNode,      NGroup,              NEL, NJ, NJTotal, NEQM, NEQMTotal, NEQM_Mapping ;
+Read (Unit = UnFile, FMT = "(3(I3,2X),1(I5,2X),6(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003,  END=1004 ) NDOF, NDim, MaxNNode,      NGroup,              NEL, NJ, NJTotal, NEQM, NEQMTotal, NEQM_Mapping ;
 
 ! Available Load Cases
 Write(*,*)"  Reading Load Cases ..." ;
-Read (Unit = UnFile, FMT = "(5(I3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( LoadC ( I ), I = 1, 5 ) ;
+Read (Unit = UnFile, FMT = "(5(I3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( LoadC ( I ), I = 1, 5 ) ;
 
 NPM    = 8 ;
 NMat   = NGroup ;
@@ -111,8 +111,8 @@ Allocate ( Param%IntM ( 7, 6),Param%RealM ( 7, 6)  ) ;   !?? modify this
 
 ! Reading Param Model
 Write(*,*)"Reading Param Array ..." ;
-Read (Unit = UnFile, FMT = "(<6*7>(I19,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 )  (( Param%IntM  ( I, J), I = 1, 7), J = 1, 6) ;
-Read (Unit = UnFile, FMT = "(<6*7>(E31.23E3,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) (( Param%RealM  ( I, J), I = 1, 7), J = 1, 6) ;
+Read (Unit = UnFile, FMT = "(<6*7>(I19,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004 )  (( Param%IntM  ( I, J), I = 1, 7), J = 1, 6) ;
+Read (Unit = UnFile, FMT = "(<6*7>(E31.23E3,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004 ) (( Param%RealM  ( I, J), I = 1, 7), J = 1, 6) ;
 
 
 Write(*    ,*) 'End Subroutine < Input_BASIC >' ;
@@ -244,21 +244,21 @@ NLCase = MaxVal ( LoadC ) ;
 UnFile = UnInptXYZ ;
 Write(*,*)"Reading Coordinates ..." ;
   DO K = 1, NJ ;
-    Read (Unit = UnFile, FMT = "(<NDim>(E31.23E3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 )( XYZ ( K, J ), J = 1, NDim ) ;
+    Read (Unit = UnFile, FMT = "(<NDim>(E31.23E3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 )( XYZ ( K, J ), J = 1, NDim ) ;
   End Do ;
 
 ! Element connectivities
 UnFile = UnInptCnn ;
 Write(*,*)"Reading Element Connectivities ..." ;
   DO IEL = 1, NEL ;
-    Read (Unit = UnFile, FMT = "(<MaxNNode>(I19,2X),I5,2X,I5,2X,I5)", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( INOD ( INode, IEL ), INode = 1, MaxNNode ), MTEL ( IEL ), ELT ( IEL ), ELGR ( IEL ) ;
+    Read (Unit = UnFile, FMT = "(<MaxNNode>(I19,2X),I5,2X,I5,2X,I5)", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( INOD ( INode, IEL ), INode = 1, MaxNNode ), MTEL ( IEL ), ELT ( IEL ), ELGR ( IEL ) ;
   End Do ;
 
 ! Constraints
 UnFile = UnInptCnt ;
 Write(*,*)"Reading Constraints ..." ;
   DO IJ = 1, NJ ;
-    Read (Unit = UnFile, FMT = "(<NDOF>(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( ID ( IJ, IDOF ), IDOF = 1, NDOF ) ;
+    Read (Unit = UnFile, FMT = "(<NDOF>(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( ID ( IJ, IDOF ), IDOF = 1, NDOF ) ;
   End Do ;
 
 
@@ -268,7 +268,7 @@ UnFile = UnInptMdl ;
   If ( LoadC (5) /= 0 ) Then ;
     Write(*,*)"Reading PML Teritory ..." ;
       DO J = 1, 2
-        Read (Unit = UnFile, FMT = "(<2*NDim>(E31.23E3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) (PML_DIM ( I, J ), I = 1, 2 * NDim ) ; 
+        Read (Unit = UnFile, FMT = "(<2*NDim>(E31.23E3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) (PML_DIM ( I, J ), I = 1, 2 * NDim ) ; 
       End Do ;
   End If ;
 
@@ -276,7 +276,7 @@ UnFile = UnInptMdl ;
   If ( LoadC (1) /= 0 ) Then ;
     Write(*,*)"Reading Body Forces ..." ;
       DO I = 1, Param%IntM( 1, 1) ; ! Param%IntP( 1, 1)=NBLD: Number of body force load.   Param%IntP( 1, 2) = NPBL
-        Read (Unit = UnFile, FMT = "(<Param%IntM( 1, 2)>(E31.23E3,2x))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( PBLD ( I, J ) , J = 1, Param%IntM( 1, 2) ) ;  ! Param%IntM( 1, 2) = NDIm
+        Read (Unit = UnFile, FMT = "(<Param%IntM( 1, 2)>(E31.23E3,2x))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( PBLD ( I, J ) , J = 1, Param%IntM( 1, 2) ) ;  ! Param%IntM( 1, 2) = NDIm
       End Do ;
 
 !    ! Load Types
@@ -295,7 +295,7 @@ UnFile = UnInptMdl ;
   If ( LoadC (2) /= 0 ) Then ;
     Write(*,*)"Reading Pressure Loads ..." ;
       DO J = 1,  Param%IntM( 2, 4 ) ; ! NIDBC
-        Read (Unit = UnFile, FMT = "((I19,2X),<2*NDim>(I3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) IDBC ( J, 1 ), ( IDBC ( J, I ), I = 2, 2 * NDim+1 ) ;
+        Read (Unit = UnFile, FMT = "((I19,2X),<2*NDim>(I3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) IDBC ( J, 1 ), ( IDBC ( J, I ), I = 2, 2 * NDim+1 ) ;
       End Do ;
   End If ;
 
@@ -303,7 +303,7 @@ UnFile = UnInptMdl ;
   IF ( LoadC ( 3 ) /= 0 ) Then ;
     Write(*,*)"Reading Joint Loads ..." ;
       DO I = 1, Param%IntM( 3, 1) ; ! Param%IntP( 3, 1) = NLN
-        Read (Unit = UnFile, FMT = "(I19,2X,<NDim>(E31.23E3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) JLoad ( I ), ( PLoad( J, I ), J = 1, NDim ) ;
+        Read (Unit = UnFile, FMT = "(I19,2X,<NDim>(E31.23E3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) JLoad ( I ), ( PLoad( J, I ), J = 1, NDim ) ;
       End Do
   End If ;
 
@@ -311,7 +311,7 @@ UnFile = UnInptMdl ;
   IF ( LoadC ( 4 ) /= 0 ) Then ;
     Write(*,*)"Reading Support Displacements ..." ;
       DO I = 1, Param%IntM( 4, 1 ) ; ! Param%IntM( 4, 1 ) = NSND
-        Read (Unit = UnFile, FMT = "(<NDOF+1>(E31.23E3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) UDis( NDOF + 1, I ), ( UDis ( K, I ), K = 1, NDOF ) ;
+        Read (Unit = UnFile, FMT = "(<NDOF+1>(E31.23E3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) UDis( NDOF + 1, I ), ( UDis ( K, I ), K = 1, NDOF ) ;
       End Do ;
   End If ;
 
@@ -323,7 +323,7 @@ Write(*,*)"Reading Dynamic Loads ..." ;
     If ( Param%IntM( 5, 3 ) == 1 ) Then ;    ! RICKER PULSE or sine function for dynamic pressure
       Write(*,*)"Reading IDBC ..." ;
         DO J = 1, Param%IntM( 2, 4 ) ; ! NIDBC
-          Read (Unit = UnFile, FMT = "((I19,2X),<2*NDim>(I3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) IDBC ( J, 1 ), ( IDBC ( J, I ), I = 2, 2 * NDim+1 ) ;
+          Read (Unit = UnFile, FMT = "((I19,2X),<2*NDim>(I3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004) IDBC ( J, 1 ), ( IDBC ( J, I ), I = 2, 2 * NDim+1 ) ;
         End Do ;
 
 !        Else If ( Param%IntM( 5, 3 ) == 2_Tiny ) Then ;   ! Base acceleration
@@ -340,11 +340,11 @@ Write(*,*)"Reading Dynamic Loads ..." ;
 
       ! Reading the node numbers on the DRM boundary
       Write(*,*)"Reading DRM boundary nodes ..."  ;
-      Read (Unit = UnFile, FMT = "(<Param%IntM( 7, 1)>(I19,1X))", ADVANCE = 'Yes', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( NoBndry_DRM ( I ), I = 1, Param%IntM( 7, 1) ) ; ! NNBndry_DRM
+      Read (Unit = UnFile, FMT = "(<Param%IntM( 7, 1)>(I19,1X))", ADVANCE = 'Yes', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( NoBndry_DRM ( I ), I = 1, Param%IntM( 7, 1) ) ; ! NNBndry_DRM
 
       ! Reading the node numbers on the DRM neighbor
       Write(*,*)"Reading DRM neighbor nodes ..." ;
-      Read (Unit = UnFile, FMT = "(<Param%IntM( 7, 2)>(I19,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( NoLayer_DRM ( I ), I = 1, Param%IntM( 7, 2)) ;  ! NNLayer_DRM
+      Read (Unit = UnFile, FMT = "(<Param%IntM( 7, 2)>(I19,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( NoLayer_DRM ( I ), I = 1, Param%IntM( 7, 2)) ;  ! NNLayer_DRM
 
     End If ;
 
@@ -353,22 +353,22 @@ Write(*,*)"Reading Dynamic Loads ..." ;
   ! Reads down node numbers and equation numbers of nodes in which history of Displacement is required
   If ( Param%IntM( 6, 1) /= 0 ) Then ; ! NNDH
     Write(*,*)"Reading Node Numbers for displacements ..." ;
-    Read (Unit = UnFile, FMT = "(<Param%IntM( 6, 1)>(I19,2X),5x,<Param%IntM( 6, 1)>(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( NDAN ( I ), I = 1, Param%IntM( 6, 1) ), ( NDPN ( I ), I = 1, Param%IntM( 6, 1) ) ;
-    Read (Unit = UnFile, FMT = "(<Param%IntM( 6, 1)*NDIM>(I19,2X))"             , ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( EqDis ( I ), I = 1, Param%IntM( 6, 1)* NDIM ) ;
+    Read (Unit = UnFile, FMT = "(<Param%IntM( 6, 1)>(I19,2X),5x,<Param%IntM( 6, 1)>(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( NDAN ( I ), I = 1, Param%IntM( 6, 1) ), ( NDPN ( I ), I = 1, Param%IntM( 6, 1) ) ;
+    Read (Unit = UnFile, FMT = "(<Param%IntM( 6, 1)*NDIM>(I19,2X))"             , ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( EqDis ( I ), I = 1, Param%IntM( 6, 1)* NDIM ) ;
   End If ;
 
   ! Reads down node numbers and equation numbers of nodes in which history of velocity is required
   If ( Param%IntM( 6, 2) /= 0 ) Then ; ! NNVH
     Write(*,*)"Reading Node Numbers for velocity ..." ;
-    Read (Unit = UnFile, FMT = "(<Param%IntM( 6, 2)>(I19,2X),5x,<Param%IntM( 6, 2)>(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( NVAN ( I ), I = 1, Param%IntM( 6, 2) ), ( NVPN ( I ), I = 1, Param%IntM( 6, 2) ) ;
-    Read (Unit = UnFile, FMT = "(<Param%IntM( 6, 2)*NDIM>(I19,2X))"             , ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( EqVel ( I ), I = 1, Param%IntM( 6, 2) * NDIM ) ;
+    Read (Unit = UnFile, FMT = "(<Param%IntM( 6, 2)>(I19,2X),5x,<Param%IntM( 6, 2)>(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( NVAN ( I ), I = 1, Param%IntM( 6, 2) ), ( NVPN ( I ), I = 1, Param%IntM( 6, 2) ) ;
+    Read (Unit = UnFile, FMT = "(<Param%IntM( 6, 2)*NDIM>(I19,2X))"             , ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( EqVel ( I ), I = 1, Param%IntM( 6, 2) * NDIM ) ;
   End If ;
 
   ! Reads down node numbers and equation numbers of nodes in which history of acceleration is required
   If ( Param%IntM( 6, 3) /= 0 ) Then ; ! NNAH
     Write(*,*)"Reading Node Numbers for acceleration ..." ;
-    Read (Unit = UnFile, FMT = "(<Param%IntM( 6, 2)>(I19,2X),5x,<Param%IntM( 6, 2)>(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( NAAN ( I ), I = 1, Param%IntM( 6, 3)), ( NAPN ( I ), I = 1, Param%IntM( 6, 3) ) ;
-    Read (Unit = UnFile, FMT = "(<Param%IntM( 6, 2)*NDIM>(I19,2X))"             , ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( EqAcc ( I ), I = 1, Param%IntM( 6, 3) * NDIM ) ;
+    Read (Unit = UnFile, FMT = "(<Param%IntM( 6, 2)>(I19,2X),5x,<Param%IntM( 6, 2)>(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( NAAN ( I ), I = 1, Param%IntM( 6, 3)), ( NAPN ( I ), I = 1, Param%IntM( 6, 3) ) ;
+    Read (Unit = UnFile, FMT = "(<Param%IntM( 6, 2)*NDIM>(I19,2X))"             , ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( EqAcc ( I ), I = 1, Param%IntM( 6, 3) * NDIM ) ;
   End If ;
 
 ! <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -377,7 +377,7 @@ Write(*,*)"Reading Dynamic Loads ..." ;
 Write(*,*)"Reading Material Properties ..." ;
 UnFile = UnInptMat ;
   DO I = 1, NMat ;
-    Read (Unit = UnFile, FMT = "(<NPM>(E31.23E3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( PMat ( I, J ), J = 1, NPM ) ; 
+    Read (Unit = UnFile, FMT = "(<NPM>(E31.23E3,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( PMat ( I, J ), J = 1, NPM ) ; 
   End Do ;
 
 ! <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -385,9 +385,9 @@ UnFile = UnInptMat ;
 ! Node numbering mapping
 Write(*,*)"Reading Index Sets ..." ;
 UnFile = UnInptApp ;
-Read (Unit = UnFile, FMT = "(<NEQM_Mapping>(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( App_Numbers   ( I ), I = 0, NEQM_Mapping - 1 ) ;
-Read (Unit = UnFile, FMT = "(<NEQM_Mapping>(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( PETSc_Numbers ( I ), I = 0, NEQM_Mapping - 1 ) ;
-Read (Unit = UnFile, FMT = "(<NEQM>(I19,2X)        )", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( Indices       ( I ), I = 0, NEQM         - 1 ) ;
+Read (Unit = UnFile, FMT = "(<NEQM_Mapping>(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( App_Numbers   ( I ), I = 0, NEQM_Mapping - 1 ) ;
+Read (Unit = UnFile, FMT = "(<NEQM_Mapping>(I19,2X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( PETSc_Numbers ( I ), I = 0, NEQM_Mapping - 1 ) ;
+Read (Unit = UnFile, FMT = "(<NEQM>(I19,2X)        )", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( Indices       ( I ), I = 0, NEQM         - 1 ) ;
 
 ! Number of non-zero entris of PETSc objects   !!??  Check if they should start from 0 or 1 ;
 UnFile = UnInptStiff ;
@@ -728,14 +728,14 @@ Integer   :: IJ ;                     ! Loop index on NJ.
 UnFile = UnInpt_Lambda ;
 Write(*,*)"Reading Heterogeneous Lambda ..." ;
   DO K = 1, NJ ;
-    Read (Unit = UnFile, FMT = "(E31.23E3)", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) PMat_Lambda ( K ) ;
+    Read (Unit = UnFile, FMT = "(E31.23E3)", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) PMat_Lambda ( K ) ;
   End Do ;
 
 ! Mu
 UnFile = UnInpt_Mu ;
 Write(*,*)"Reading Heterogeneous Mu ..." ;
   DO K = 1, NJ ;
-    Read (Unit = UnFile, FMT = "(E31.23E3)", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) PMat_Mu ( K ) ;
+    Read (Unit = UnFile, FMT = "(E31.23E3)", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) PMat_Mu ( K ) ;
   End Do ;
 
 ! <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -822,7 +822,7 @@ Integer   :: UnFile ;                ! Holds Unit of a file for error message.
 ! Basic data
 UnFile = Un_Inversion_DS ;
 Write(*,*)"Reading Inversion Data Structure Basic Data ..." ;
-Read (Unit = UnFile, FMT = "(4(I10,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) NJ_Rank_IParts, NJ_Mapping, NStore_Mapping, NStore_Rank ;
+Read (Unit = UnFile, FMT = "(4(I10,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004 ) NJ_Rank_IParts, NJ_Mapping, NStore_Mapping, NStore_Rank ;
 
 
 ! <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -916,12 +916,12 @@ Integer   :: I, J ;
 ! Index sets for inversion
 UnFile = Un_Inversion_DS ;
 Write(*,*)"Reading Inversion Data Structure Array Data ..." ;
-Read (Unit = UnFile, FMT = "(<NJ_Rank_IParts>(I10,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( idx_Mat_from           ( I ), I = 1, NJ_Rank_IParts ) ;
-Read (Unit = UnFile, FMT = "(<NJ_Mapping>(I10,1X))",     ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( idx_Mat_Extend_from    ( I ), I = 1, NJ_Mapping ) ;
-Read (Unit = UnFile, FMT = "(<NJ_Mapping>(I10,1X))",     ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( idx_Mat_Extend_to      ( I ), I = 1, NJ_Mapping ) ;
-Read (Unit = UnFile, FMT = "(<NStore_Mapping>(I10,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( U_Store_Numbers_Global ( I ), I = 1, NStore_Mapping ) ;
-Read (Unit = UnFile, FMT = "(<NStore_Rank>(I10,1X))",    ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( idx_u_from             ( I ), I = 1, NStore_Rank ) ;
-Read (Unit = UnFile, FMT = "(<NStore_Rank>(I10,1X))",    ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) ( idx_u_to               ( I ), I = 1, NStore_Rank ) ;
+Read (Unit = UnFile, FMT = "(<NJ_Rank_IParts>(I10,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( idx_Mat_from           ( I ), I = 1, NJ_Rank_IParts ) ;
+Read (Unit = UnFile, FMT = "(<NJ_Mapping>(I10,1X))",     ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( idx_Mat_Extend_from    ( I ), I = 1, NJ_Mapping ) ;
+Read (Unit = UnFile, FMT = "(<NJ_Mapping>(I10,1X))",     ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( idx_Mat_Extend_to      ( I ), I = 1, NJ_Mapping ) ;
+Read (Unit = UnFile, FMT = "(<NStore_Mapping>(I10,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( U_Store_Numbers_Global ( I ), I = 1, NStore_Mapping ) ;
+Read (Unit = UnFile, FMT = "(<NStore_Rank>(I10,1X))",    ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( idx_u_from             ( I ), I = 1, NStore_Rank ) ;
+Read (Unit = UnFile, FMT = "(<NStore_Rank>(I10,1X))",    ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004 ) ( idx_u_to               ( I ), I = 1, NStore_Rank ) ;
 
 ! Construction of idx_Mat_to:
 ForAll ( I = 1:NJ_Rank_IParts ) idx_Mat_to (I) = I - 1;
@@ -1017,7 +1017,7 @@ If ( NNDH /= 0 ) Then
   Read  (UnFile, *) temp_char; ! 1
   Read  (UnFile, *) temp_char; ! 2
     Do IStep = 0, Nstep
-      Read (Unit = UnFile, FMT = "(E14.6E3,2x, <NNDH>(<NDim>(E18.10E3,2x),3x) )", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005) Time, ( Dis_meas ( IStep , I ), I = 1, NNDH * NDim ) ;
+      Read (Unit = UnFile, FMT = "(E14.6E3,2x, <NNDH>(<NDim>(E18.10E3,2x),3x) )", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004) Time, ( Dis_meas ( IStep , I ), I = 1, NNDH * NDim ) ;
     End Do
 End If
 
@@ -1112,7 +1112,7 @@ Integer   :: UnFile ;                ! Holds Unit of a file for error message.
     Open ( Unit = UnFile, FILE = TRIM(ModelName)//'_'//Trim(AdjustL(IndexSize))//'_'//Trim(AdjustL(IndexRank))//'.Mat_Vis',  ERR =  1001, IOSTAT = IO_File, ACCESS = 'SEQUENTIAL', ACTION ='Read', ASYNCHRONOUS = 'NO', BLANK = 'NULL', BLOCKSIZE = 0, DEFAULTFILE = TRIM(Model_InDir), DisPOSE = 'KEEP', FORM = 'Formatted', POSITION = 'ASIS', STATUS ='Old') ;
 
     Write(*,*)"Reading Material Visualization Basic Data ..." ;
-    Read (Unit = UnFile, FMT = "(1(I10,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) NJ_Para ;
+    Read (Unit = UnFile, FMT = "(1(I10,1X))", ADVANCE = 'YES', ASYNCHRONOUS = 'NO', IOSTAT = IO_Read, ERR = 1003, End = 1004 ) NJ_Para ;
 
     Close ( Unit = UnFile, STATUS = 'KEEP', ERR = 1002, IOSTAT = IO_File ) ;
 
@@ -1237,14 +1237,14 @@ Integer   :: IJ ;                     ! Loop index on NJ.
 UnFile = UnFile_L ;
 Write(*,*)"Reading Heterogeneous Lambda ..." ;
   DO K = 1, NJ ;
-    Read (Unit = UnFile, FMT = "(E31.23E3)", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) PMat_Lambda ( K ) ;
+    Read (Unit = UnFile, FMT = "(E31.23E3)", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004 ) PMat_Lambda ( K ) ;
   End Do ;
 
 ! Mu
 UnFile = UnFile_M ;
 Write(*,*)"Reading Heterogeneous Mu ..." ;
   DO K = 1, NJ ;
-    Read (Unit = UnFile, FMT = "(E31.23E3)", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004, EOR = 1005 ) PMat_Mu ( K ) ;
+    Read (Unit = UnFile, FMT = "(E31.23E3)", ADVANCE = 'YES', ASYNCHRONOUS = 'NO',                 IOSTAT = IO_Read, ERR = 1003, End = 1004) PMat_Mu ( K ) ;
 
   End Do ;
 

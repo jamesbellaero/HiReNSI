@@ -219,7 +219,8 @@ Read(UN_ADR,*) PMLZ1 ;         ! PML boundaries
   End If ;
 
 !InDir = TRIM(AdjustL (InDir))//'/'//TRIM(AdjustL (NAME))//"/Model" ;     ! This path is for Windows
-InDir = TRIM(AdjustL (InDir))//'/'//TRIM(AdjustL (NAME))//"/Model" ;      ! This path is for Linux
+!InDir = TRIM(AdjustL (InDir))//'/'//TRIM(AdjustL (NAME))//"/Model" ;      ! This path is for Linux
+InDir = TRIM(AdjustL (InDir));
 NameAns = TRIM(AdjustL (Name))//'_Ans' ;
 
 
@@ -257,7 +258,7 @@ NodeCounter             = 0_Lng ;
 !write(*,*) 'after' 
 ! Coordinates of each node
 Write (*,*)"Reading Coordinates ..." ;
-  DO K = 1, NJ ;
+  DO K = 1, 9891 ;
     Read  (UnInptXYZ, *) I, ( XYZ ( I, J ), J = 1, NDim ) ; 
   End Do ;
 
@@ -793,6 +794,9 @@ DeAllocate ( LTEL, MTEL, ELT, ELGR, INOD, XYZ, XYZN, XN ) !, DRMElm ) ;
 Write (*,*)"Writing Information file ..." ;
 Write  (UnInf, "('Number of Elements:',I19 )") NEL ;
 Write  (UnInf, "('Total Number of Joints:',I19 )") NJ+NJN+NEL ;
+IF ( Analysis_Type /= 1) Then;
+  NNBndry=0;
+End If;
 Write  (UnInf, "('Number of NOdes on the DRM boundary:',I19 )") NNBndry + NNewBound ;
 Write  (UnInf, "('Number of NOdes on the DRM Layer:',I19 )") NNLayer + NNewLayer ;
 

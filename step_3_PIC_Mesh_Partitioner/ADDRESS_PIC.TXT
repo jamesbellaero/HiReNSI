@@ -1,19 +1,13 @@
 INPUT FILE NAME: (.TXT)
-'Inversion_3D_Ex16_HDF5_fine' 'Inversion_3D_GV' 'Inversion_3D_Ex17_HDF5'
+'Mesh'
 Number of Analysis Type:  0: formatted - 1: Binary - 2: HDF5
 69  2
 INPUT DIRECTORY:
-'/terra1/arash/3D/Ansys'  '/terra1/arash/3D/X_Comparison_with_Babak/from_Ansys/' 
+'/home/jamesbell/Research/Meshes/Mesh'
 INTERNAL DIRECTORY:
-'/terra1/arash/3D/Ansys'  '/terra1/arash/3D/X_Comparison_with_Babak/from_Ansys/' 
+'/home/jamesbell/Research/Meshes/Mesh' 
 OUTPUT DIRECTORY:
-'/terra1/arash/3D/Partitioned_Mesh'  '/terra1/arash/3D/X_Comparison_with_Babak/from_PIC/' 
-
-
-
-export PETSC_DIR=/terra1/numerical_libraries/petsc-3.2-p6
-
-
+'/home/jamesbell/Research/Meshes/Mesh/Output' 
 
 <<<<<  Analysis numbers   >>>>>
 --  PML -- 

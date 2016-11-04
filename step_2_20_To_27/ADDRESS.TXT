@@ -1,7 +1,7 @@
 INPUT FILE Name: (.TXT)
-'Inversion_3D_Ex16_HDF5_fine' 'Inversion_3D_Ex17_HDF5'
+'Mesh'
 INPUT DIRECTORY:
-'/terra1/arash/3D/Ansys' '/terra1/arash/3D/X_Comparison_with_Babak/from_Ansys' 
+'/home/jamesbell/Research/Meshes/Mesh'
 Number of Dimension (NDim):                                 -- Do not change -------
 3
 Number of Degrees of Freedom (NDOF):                        -- Do not change -------
@@ -11,21 +11,21 @@ Number of Nodes (NNode):                                    -- Do not change ---
 Analysis_Type   ! 0: PML ANALYSIS - 1: DRM ANALYSIS
 0
 Number of elements (NEl):
-578592
+2000
 Number of Joints (NJ):
-2377365
+9891
 Number of Corner nodes (Joints) (NJCorner):
-599675
+2646
 Tolerance:                                                  -- Do not change ---------
 1.0E-5
 X boundaries of the domain (where you hit the rigid boundary)
--26.250
-+26.250
+-1.2
++1.2
 Y boundaries of the domain
--26.250
-+26.250
+-1.2
++1.2
 Z boundaries of the domain
--51.250
+-.2
 Number of Nodes on the Boundary (NNBndry):
 0
 Number of Nodes On the layer adjacent to the boundary (NNLayer):
@@ -41,29 +41,3 @@ Y boundaries of DRM layer
 Z boundaries of DRM layer
 +300.0
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-INPUT FILE Name: (.TXT)
-'Alluvial_01' 'Valley_01'  'DRM_TEST08' 'WA90' 'PML_TEST07'  'PML_Quad_16El' 'PML_TQ_16El' 'PML_Tri_12El' 'UnS_Test01'  
-INPUT DIRECTORY:
-'E:\Projects\Fortran\Thesis\Data\INPUT\PIC\Alluvial'
-Number of elements
-74128
-Number of Joints
-223237
-
-
-'/home/babak/My_Folder/Thesis/Data/Input/PIC/3D/Pyramid'

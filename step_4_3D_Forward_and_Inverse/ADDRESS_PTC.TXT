@@ -3,13 +3,13 @@ Model INPUT FILE NAME: (.TXT)
 NUMBER OF ANALYSIS TYPE:
 63   2
 INPUT DIRECTORY:
-'/terra1/arash/3D/Partitioned_Mesh'
+'/home/jamesbell/Research/Meshes/Mesh'
 INTERNAL DIRECTORY:
-'/terra1/arash/3D/Partitioned_Mesh'
+'/home/jamesbell/Research/Meshes/Mesh'
 OUTPUT DIRECTORY:
-'/terra1/arash/3D/Output'
+'/home/jamesbell/Research/Meshes/Mesh'
 Analysis INPUT FILE NAME: (.TXT)
-'Inversion_3D_Ex16_HDF5'
+'Mesh_Ans'
 
 
 

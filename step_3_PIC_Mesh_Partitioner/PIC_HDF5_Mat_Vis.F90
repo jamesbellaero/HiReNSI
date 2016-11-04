@@ -52,8 +52,8 @@ ModelName, OutDir                                                               
 
 
 Implicit None ;
-
 #include "finclude/petscsys.h"
+!#include "metis.h"
 
 ! =========================== Global Variables ======================================================================================================
 
