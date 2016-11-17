@@ -121,11 +121,11 @@ Read(UN_ADR,*) OutDir ; ! Direction of the output file
 Model_InDir = TRIM(AdjustL (Model_InDir)) ;
 
 Write(*,*)"Model_InDir: ", Model_InDir ;
-!Open ( 11, FILE = 'checkDir.txt', ERR =  1001, IOSTAT = IO_File, ACCESS = 'SEQUENTIAL', ACTION = 'READ', ASYNCHRONOUS = 'NO', BLANK = 'NULL', BLOCKSIZE = 0, DEFAULTFILE = TRIM(Model_InDir), DisPOSE = 'KEEP', FORM = 'FORMATTED', POSITION = 'ASIS', STATUS = 'unknown' ) ;
+Open ( 11, FILE = 'checkDir.txt', ERR =  1001, IOSTAT = IO_File, ACCESS = 'SEQUENTIAL', ACTION = 'READ', ASYNCHRONOUS = 'NO', BLANK = 'NULL', BLOCKSIZE = 0, DEFAULTFILE = TRIM(Model_InDir), DisPOSE = 'KEEP', FORM = 'FORMATTED', POSITION = 'ASIS', STATUS = 'unknown' ) ;
 
 ! - Input FILE --------------------------------------------------------------------------------------------------------------------------------------
 UnFile = UnInptMdl ;
-!Open ( Unit = UnFile, FILE = TRIM(ModelName)//'.txt', ERR =  1001, IOSTAT = IO_File, ACCESS = 'SEQUENTIAL', ACTION = 'READ', ASYNCHRONOUS = 'NO', BLANK = 'NULL', BLOCKSIZE = 0, DEFAULTFILE = TRIM(Model_InDir), DisPOSE = 'KEEP', FORM = 'FORMATTED', POSITION = 'ASIS', STATUS = 'OLD' ) ;
+Open ( Unit = UnFile, FILE = TRIM(ModelName)//'.txt', ERR =  1001, IOSTAT = IO_File, ACCESS = 'SEQUENTIAL', ACTION = 'READ', ASYNCHRONOUS = 'NO', BLANK = 'NULL', BLOCKSIZE = 0, DEFAULTFILE = TRIM(Model_InDir), DisPOSE = 'KEEP', FORM = 'FORMATTED', POSITION = 'ASIS', STATUS = 'OLD' ) ;
 
 ! - Input file for nodes' coordinates ---------------------------------------------------------------------------------------------------------------
 UnFile = UnInptXYZ ;

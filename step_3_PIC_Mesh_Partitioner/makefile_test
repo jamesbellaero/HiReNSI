@@ -1,0 +1,73 @@
+# =================================================================================================================
+#
+# Developer    : Babak Poursartip 
+#                The University of Texas at Austin, TX, USA
+# Code         : PIC (Partitioner and Input Creator)
+# makefile     : PETSc Library
+# Last Update  : 21 June 2012
+# arash: 27 October
+# =================================================================================================================
+
+info ::
+	@echo "do:"
+	@echo "  make SOURCE"
+	@echo "    where SOURCE is one of ${SOURCESF}"
+
+FFLAGS	    = -O2 -I${METIS_DIR}/include
+FLINKER	    = ${PETSC_DIR}/arch-icc-opt/bin/mpif90 
+CPPFLAGS    = 
+FPPFLAGS    =
+LOCDIR      = /home/jamesbell/Research/Meshes/Mesh
+
+SOURCESF    =     Parameters.F90 \
+		PIC_Convert.F90 \
+		Inf.F90 \
+		PIC_Input.F90 \
+		PIC_Output.F90 \
+		PIC_Output_Binary.F90 \
+		PIC_Output_HDF5.F90 \
+		PIC_ReNumbering.F90 \
+		PIC_Heterogeneous_Material.F90 \
+		PIC_Inversion_Data_Structure.F90 \
+		PIC_HDF5_Mat_Vis.F90 \
+		PML_Parameters.F90 \
+		ShapeFunc.F90 \
+		PIC_MassDampStiffPMLNNZero.F90 \
+		Assemble.F90 \
+		PIC_ObjectSize.F90 \
+		PIC_Main.F90
+
+SOURCESH     = ${METIS_DIR}/include/metis.h
+
+OBJSF       =  $(SOURCESF:%.F90=%.o)
+
+MANSEC      = KSP
+#CLEANFILES = rhs.vtk solution.vtk
+
+main2 :  $(SOURCESF)  
+	@echo Linking...
+	@echo $(SOURCESH)
+	-$(FLINKER) $(FFLAGS) $(SOURCESF) -o main *.o
+	@echo Done!
+
+main :  $(SOURCESF)
+	ifort -o Parameters.f90
+	@echo Linking...
+	-${PETSC_DIR}/arch-icc-opt/bin/mpif90 -c -fPIC -march=native -mtune=native $(OBJSF) -o main *.o 
+	@echo Done!
+
+
+
+
+info ::
+	@echo "end of make file "
+
+# clean rule for object files
+cln ::
+	@echo "Clean Object files..."
+	rm -rf *.o main
+	rm -rf *.mod main
+	rm -rf fort.* main
+
+
+

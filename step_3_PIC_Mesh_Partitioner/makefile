@@ -72,7 +72,7 @@ cln ::
 	@echo "Clean Object files..."
 	rm -rf *.o main
 	rm -rf *.mod main
-	rm -rf fort.* main
+
 
 
 
