@@ -106,7 +106,6 @@ Integer (Kind=Smll)  :: LOCx, LOCy, LOCz, Lreg ;
 Integer (Kind=Lng )  :: Mat_Indep_Num_Total ;
 
 Integer (Kind=Lng )  :: counter
-
 ! - Real Variables ----------------------------------------------------------------------------------------------------------------------------------
 Real (Kind=DBL)      :: PML_X01, PML_X02, PML_X03, PML_X04, PML_X05, PML_X06
 Real (Kind=DBL)      :: diffx, diffy, diffz
@@ -146,7 +145,7 @@ Real (Kind=DBL)      :: PMat_Mu (NJ) ;           ! heterogeneous Mu
 ! - Complex Variables -------------------------------------------------------------------------------------------------------------------------------
 ! - Character Variables -----------------------------------------------------------------------------------------------------------------------------
 ! - Character Variables -----------------------------------------------------------------------------------------------------------------------------
-Character (Kind = 1, Len = 20)  :: IndexRank ;   ! A variable for storing the Rank number in Character format for adding at the end of the input file Name.
+Character (20)  :: IndexRank ;   ! A variable for storing the Rank number in Character format for adding at the end of the input file Name.
 Character (Kind = 1, Len = 20)  :: IndexSize ;   ! A variable for storing the Size number in Character format for adding at the end of the input file Name.
 Character (Kind = 1, Len = 30 ) :: ModelName ;   ! Name of Input file
 Character (Kind = 1, Len = 100) :: OutDir ;      ! Directory of output files (Results)
@@ -162,11 +161,9 @@ Integer (Kind=Smll)  :: IO_File ;                ! Used for IOSTAT - Input Outpu
 Integer (Kind=Smll)  :: IO_Write ;               ! Used for IOSTAT - Input Output Status - in the Write cammand.
 Integer (Kind=Smll), PARAMETER  :: Un_Lambda           = 801  ;            ! the Unit number of lambda
 Integer (Kind=Smll), PARAMETER  :: Un_Mu               = 802  ;            ! the Unit number of mu
-
 ! =========================== Subroutine CODE =======================================================================================================
 Tol = 0.000001_DBL
 !goto 1947
-
 Select Case (Ndim)
 ! ===================================================================================================================================================
 !
@@ -192,6 +189,7 @@ Select Case (Ndim)
 ! -------------------------
 
 ! make sure we are using spectral elements
+Write(*,*) "Begin numbering for 2D heterogeneous materials"
 IF ( MaxNNode /= 9 ) Then
    Write(*,*) 'Error in subroutine Het_Mat_Numbering'
    Stop
@@ -215,6 +213,7 @@ Do IEL = 1 , NEL
    LOCx = 0
    LOCy = 0
 
+Write(*,*) "Set PML boundaries"
 ! find the position of the center point (right or left zones)
 !---------- ---------- ---------- ---------- ----------
 ! the point XG(1) can be either in right or left zone (or neither)
@@ -285,7 +284,7 @@ End Do
 ! \   4   \        3        \   2   \
 ! \       \                 \       \
 ! ---------     -------     ---------
-
+write(*,*) "Finding nodal regions"
 Node_Region (:) = 6
 
 ! 1. non-corner regions: 1, 5, 3 (boundaries need to be modified)
@@ -585,11 +584,12 @@ Case (3)
 ! ------------------------- (front zone: LOCx = +1)
 
 ! make sure we are using spectral elements
+Write(*,*) "3D Partitioning"
 IF ( MaxNNode /= 27_Tiny ) Then
    Write(*,*) 'Error in subroutine Het_Mat_Numbering - this is only written for quadratic spectral elements'
    Stop
 End If
-
+Write(*,*) "Setting PML Dimensions"
 ! PML starting point location (positive x: 01 - negative x: 02 - positive y: 03 - negative y: 04 - surface z: 05 - bottom z: 06)
 PML_X01 = PML_Dim(2,1)
 PML_X02 = PML_Dim(1,1)
@@ -597,7 +597,7 @@ PML_X03 = PML_Dim(4,1)
 PML_X04 = PML_Dim(3,1)
 PML_X05 = PML_Dim(6,1)                                                                          ! ??????????  C H E C K  ??????????
 PML_X06 = PML_Dim(5,1)                                                                          ! ??????????  C H E C K  ??????????
-
+Write(*,*) "Dimensions Set"
 
 ! make sure we are reading PML boundaries correctly
 IF ( PML_X02 > PML_X01 .OR. PML_X04 > PML_X03 .OR. PML_X06 > PML_X05) Then
@@ -742,7 +742,7 @@ End Do
 ! |       |           |       |
 ! ---------  -------  --------- (front zone: LOCx = +1)
 
-
+Write(*,*) "Determining node regions"
 Node_Region (:) = 18_Smll
 
 ! 1. non-corner regions (type i: wall and mattress-like) (boundaries need to be modified)
@@ -889,7 +889,7 @@ Do IEL = 1_Lng , NEL
    End Select
 
 End Do
-
+write(*,*) "Finished setting up node regions"
 !j = 0
 !do i = 1, nj
 !if ( node_region(i) == 4 ) then
@@ -986,7 +986,7 @@ End Do
 !write(*,*) 'nj=', nj
 
 ! - Independent Material Numbering ------------------------------------------------------------------------------------------------------------------
-
+write(*,*) "Begin material numbering"
 Mat_Indep_Num (:) = 0_Lng
 J = 0_Lng
 Do IJ = 1_Lng , NJ
@@ -1173,7 +1173,7 @@ Do IJ = 1_Lng , NJ
    End Select
 
 End Do
-
+Write(*,*) "Finished material numbering"
 ! - Material properties for the forward problem -----------------------------------------------------------------------------------------------------
 
 PMat_Lambda (:) = 0.0_DBL
@@ -1336,7 +1336,7 @@ a0 = 7.50_dbl ; b0 = 5.00_dbl ; c0 =  5.50_dbl ! radius
 
 End Do
 
-
+write(*,*) "Extend material property to PML zone"
 ! 2. extend material property to PML zone
 Do IJ = 1_Lng , NJ
 
@@ -1352,7 +1352,7 @@ End Do
 ! ===================================================================================================================================================
 
 End Select
-
+write(*,*) "Finished extension"
 
 !1947 continue
 
@@ -1421,11 +1421,11 @@ End Select
 ! =========================== Output ================================================================================================================
 
 ! - Writing down the input data for each process ----------------------------------------------------------------------------------------------------
+write(*,*)"Begin writing files for partition"
   Do IParts = 1_Shrt, NParts ; 
-
-    Write (IndexRank, *) IParts - 1_Shrt ; ! Converts Rank number to Character foramt for the file Name
+    
+    write(IndexRank,*) IParts - 1_Shrt ; ! Converts Rank number to Character foramt for the file Name;
     Write (IndexSize, *) NParts ;          ! Converts Size number to Character foramt for the file Name
-
     Write (*,*)"Writing files for partition: ", IParts;
 
     ! - Output FILEs --------------------------------------------------------------------------------------------------------------------------------

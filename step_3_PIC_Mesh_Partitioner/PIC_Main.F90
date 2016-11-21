@@ -76,6 +76,18 @@ Include 'GlobalVariables.F90'              ! Global Variables used in all codes
 Include 'PIC_GlobalVariables.F90'          ! Global Variables used sepecifically in PIC code
 
 ! ============================ START PETSC LIBRARY ===================================================================================================
+integer, allocatable :: options(:);
+integer, pointer :: vwgt_null=>null(),vsize_null=>null();
+real(kind=8),pointer :: tpwgts_null=>null();
+Character(20) :: temp_var;
+
+
+
+
+allocate(options(0:40));
+
+Call METIS_SetDefaultOptions(options);
+options=-1;
 Call PetscInitialize ( PETSC_NULL_Character  , ErrPTC ) ;
 Call MPI_Comm_size   ( PETSC_COMM_WORLD, SIZE, ErrPTC ) ;
 Call MPI_Comm_rank   ( PETSC_COMM_WORLD, RANK, ErrPTC ) ;
@@ -117,12 +129,11 @@ Read(UN_ADR,*) OutDir ; ! Direction of the output file
 
 !#Write(*,"(' ENTER THE ADDRESS OF OUTPUT FILES : ',\)")
 !#Read(*,*)OutDir
-
 Model_InDir = TRIM(AdjustL (Model_InDir)) ;
 
-Write(*,*)"Model_InDir: ", Model_InDir ;
-Open ( 11, FILE = 'checkDir.txt', ERR =  1001, IOSTAT = IO_File, ACCESS = 'SEQUENTIAL', ACTION = 'READ', ASYNCHRONOUS = 'NO', BLANK = 'NULL', BLOCKSIZE = 0, DEFAULTFILE = TRIM(Model_InDir), DisPOSE = 'KEEP', FORM = 'FORMATTED', POSITION = 'ASIS', STATUS = 'unknown' ) ;
-
+Write(*,*)"Model Filename: ", TRIM(Model_InDir)//'.txt' ;
+!Open ( 11, FILE = 'checkDir.txt', ERR =  1001, IOSTAT = IO_File, ACCESS = 'SEQUENTIAL', ACTION = 'READ', ASYNCHRONOUS = 'NO', BLANK = 'NULL', BLOCKSIZE = 0, DEFAULTFILE = TRIM(Model_InDir), DisPOSE = 'KEEP', FORM = 'FORMATTED', POSITION = 'ASIS', STATUS = 'unknown' ) ;
+Write(*,*)"Model File: ", TRIM(ModelName)//'.txt';
 ! - Input FILE --------------------------------------------------------------------------------------------------------------------------------------
 UnFile = UnInptMdl ;
 Open ( Unit = UnFile, FILE = TRIM(ModelName)//'.txt', ERR =  1001, IOSTAT = IO_File, ACCESS = 'SEQUENTIAL', ACTION = 'READ', ASYNCHRONOUS = 'NO', BLANK = 'NULL', BLOCKSIZE = 0, DEFAULTFILE = TRIM(Model_InDir), DisPOSE = 'KEEP', FORM = 'FORMATTED', POSITION = 'ASIS', STATUS = 'OLD' ) ;
@@ -170,9 +181,9 @@ Directory = MakeDirQQ (TRIM(AdjustL (InlDir))//'/'//TRIM(AdjustL (ModelName))) ;
 OutDir = TRIM(AdjustL (OutDir))//'/'//'Model' ;
 InlDir = TRIM(AdjustL (InlDir));
 
-write (*,*)"Input Directory:     ",Model_InDir ;
+write (*,*)"Input Directory:     ", TRIM(AdjustL (OutDir))//'/'//TRIM(AdjustL (ModelName));
 write (*,*)"Output Directory:    ",OutDir ;
-write (*,*)"Internal Directory:  ",InlDir ;
+write (*,*)"Internal Directory:  ",TRIM(AdjustL (InlDir))//'/'//TRIM(AdjustL (ModelName)) ;
 
 ! - Informaton file ---------------------------------------------------------------------------------------------------------------------------------
 UnFile = UnInf ;
@@ -206,7 +217,7 @@ LoadC,                                                                          
 !                                                                                                                               & ! Characters
 Param                                                                                                                           & ! Type
 ) ;
-
+write(*,*) NJ," ",NDOF
 ! Allocating required arrays
 Allocate ( MTEL (NEl), ELT (NEl), ELGR (NEl), INOD (MaxNNode,NEl), PML_DIM (2*NDim, 2), XYZ (NJ,NDim), ID (NJ,NDOF), PMat (NMat,NPM), &
            IDBC  ( Param%IntM( 2, 4), 2*NDim + 1), &  ! Param%IntM( 2,4) = NIDBC
@@ -287,9 +298,10 @@ Write (*,*)"Allocating arrays ..."
         !Do IEl = 1,NEl ;
         !  Write(Un_CHK,"(8(I10))")(ELMNTS((IEl-1)*8+J),J=1,8)
         !End Do ;
-write(*,*)'-----------------before Metis'
+
+write(*,*)'-----------------before Metis',ETypeG
       Call METIS_PartMeshDual  ( NEl, NJG, ELMNTS, ETypeG, NumFlag, NParts, Edgecut, EPart , NPart  ) ;
-write(*,*)'-----------------after Metis'
+
       Write(*    ,*) "End subroutine < Metis Version 4.0 >" ;
       Write(UnInf,*) "End subroutine < Metis Version 4.0 >" ;
     Else If ( MetisType == 1_Tiny ) Then ; ! ParMetis Version 3.2
@@ -297,9 +309,18 @@ write(*,*)'-----------------after Metis'
       write(*    ,*) "End subroutine < ParMetis Version 3.2 >"
       write(UnInf,*) "End subroutine < ParMetis Version 3.2 >"
     Else If ( MetisType == 2_Tiny ) Then ; ! Metis Version 5.1.0
+      Write(*    ,*) "Partitioning in METIS version 5.1 ...", NEL, NJG, NParts ;
       !MOptions(:) = 0 ;
       eptr (:)= eptr (:) - 1 ;
       eind (:)= eind (:) - 1 ;
+      options(0)=1;
+      options(17)=1;
+      ! Use FORTRAN numbering
+      
+      
+      !do i = 1, Maxnnode*nel
+      !Call METIS_PartMeshDual  ( NEl, NJG, eptr,eind,null,null, 4, NParts, null,options,Edgecut, EPart , NPart  ) ;
+
 !write(un_chk,*) "eind"
 !!print *,4*nel, Neind
 !do i = 0,Maxnnode*nel-1
@@ -319,14 +340,15 @@ eind2 = eind(1:Neind) ;
 
 !      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind(1:Neind), Vwgt, VSize, NCommonNodes, NParts,  tpwgts, MOptions, ObjVal, EPart, NPart(1:NJG) ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
 !      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind(0:Neind-1), 0, 0, NCommonNodes, NParts,  0, 0, ObjVal, EPart, NPart (0:NJG-1) ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
-      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind2, 0, 0, NCommonNodes, NParts,  0, 0, ObjVal, EPart, NPart ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
+      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind2, vwgt_null,vsize_null, NCommonNodes, NParts,  tpwgts_null, options, ObjVal, EPart, NPart ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
       !Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind2, PVWgt, PVSize, NCommonNodes, NParts,  Ptpwgts, PMoptions, ObjVal, EPart, NPart ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
 
       write(*    ,*) "End subroutine < Metis Version 5.1.0 >" ;
       Write(UnInf,*) "End subroutine < Metis Version 5.1.0 >" ;
     End If ;
-
+write(*,*)'------------------after Metis';  
   Else If ( NParts == 1_Shrt ) then ;
+    write(*,*) "wut lul"
     EPart = 1_Shrt ;
   End If ;
 
@@ -341,7 +363,9 @@ write(*,*) 'ERR_DeAlloc', ERR_DeAlloc
   Else If ( MetisType == 1_Tiny ) Then ;
     DeAllocate ( ElmDist, eptr, eind, ElmWgt, tpwgts, ubvec,      STAT = ERR_DeAlloc ) ;
   Else If ( MetisType == 2_Tiny ) Then ;
-    DeAllocate ( VWgt, EPart, eptr, eind,       STAT = ERR_Alloc ) ;
+   DeAllocate ( VWgt, eptr, NPart ,     STAT = ERR_Alloc ) ;
+   !DeAllocate ( VWgt,EPart, eptr, eind,NPart       STAT = ERR_Alloc ) ;
+
   End If ;
   IF ( ERR_DeAlloc /= 0 ) Then ;
     Write (*, Fmt_DEALLCT) ERR_DeAlloc ;  Write (UnInf, Fmt_DEALLCT) ERR_DeAlloc ;
@@ -350,7 +374,6 @@ write(*,*) 'ERR_DeAlloc', ERR_DeAlloc
 
 ! =============================================== ReNumbering =======================================================================================
 Write (*,*)"Main:: Allocating required matrices for ReNumbering ..."
-
 ! Allocating rquired arrays for Numbering and output
 Allocate ( NEL_Rank ( NParts ), NJ_Rank ( NParts ), Global_PETSc_Num ( NJ ), Local_PETSc_Num ( NJ, NParts ), ID_Application ( NJ, NDOF ), ID_PETSc ( NJ, NDOF ), NEqRank ( NParts ), NNodeRank ( NParts ),     STAT = ERR_Alloc ) ;
   IF ( ERR_Alloc /= 0 ) Then ;
@@ -361,14 +384,17 @@ Allocate ( NEL_Rank ( NParts ), NJ_Rank ( NParts ), Global_PETSc_Num ( NJ ), Loc
 
 
 ! ----------------- added for inversion DS ------
-    Allocate ( NPart (NJ) )
+    
+    if(.not. allocated(NPart)) then;
+      Allocate ( NPart (NJ) )
+    end if;
     NPart = 1_Shrt                               ! if we are running on one processor
-! -----------------------------------------------
+    ! -----------------------------------------------
 
 
 ! Obtaining local node and element numbers for each rank. Renumbering equation numbers to get PETSc numbering.
 NNeighbor = 6 ;
-
+write(*,*) NJ, NDOF
 Call Numbering    (                                                                                                             &
 MaxNNode, NDOF, NNeighbor, NParts, NEL, NJ, NEQMTotal,                                                                          & ! Integer Variables
 !                                                                                                                               & ! Real Variables
@@ -378,6 +404,7 @@ NPart, EPart, INod, ID, NEL_Rank, NJ_Rank, Global_PETSc_Num, NEqRank, NNodeRank,
 Nodes                                                                                                                           & ! Type 
 ) ;
 
+!end if;
 !do i = 1,nj
 !  write(*,*) i, npart(i)
 !end do
@@ -386,12 +413,14 @@ Nodes                                                                           
 
 ! =============================================== Calculating number of non-zero entries of PETSc objects ===========================================
 
+write(*,*) temp_var
 Allocate ( D_NNZ_Stiff ( NEqMTotal ), O_NNZ_Stiff ( NEqMTotal ), D_NNZ_Damp ( NEqMTotal ), O_NNZ_Damp ( NEqMTotal ), D_NNZ_Mass ( NEqMTotal ), O_NNZ_Mass ( NEqMTotal ),     STAT = ERR_Alloc ) ;
   IF ( ERR_Alloc /= 0 ) Then ;
     Write (*, Fmt_ALLCT) ERR_Alloc ;  Write (UnInf, Fmt_ALLCT) ERR_Alloc ;
     !#Call BEEP_FAIL ;
     Write(*, Fmt_FL) ;  Write(UnInf, Fmt_FL) ; Write(*, Fmt_End) ; Read(*,*) ;  STOP ;
   End If ;
+Write(*,*) "Finished calculating non-zero entries in PETSc objects"
 
 ! LOAD GAUSS INTEGRATION DATA POINTS
 !GAUSS_PNT = GAUSS_POINTS( NINT, NINT_Type ) ;
@@ -413,14 +442,13 @@ D_NNZ_Mass  = 100 ;
 O_NNZ_Mass  = 100 ;
 
 ! =============================================== Heterogeneous Materials ===========================================================================
-
 Allocate ( Node_Mat_ID ( NJ ), Node_Mat_Mapping ( NJ ),     STAT = ERR_Alloc ) ;
   IF ( ERR_Alloc /= 0 ) Then ;
     Write (*, Fmt_ALLCT) ERR_Alloc ;  Write (UnInf, Fmt_ALLCT) ERR_Alloc ;
     Write(*, Fmt_FL) ;  Write(UnInf, Fmt_FL) ; Write(*, Fmt_End) ; Read(*,*) ;  STOP ;
   End If ;
 
-!write(*,*) 'hey!-----------------Het_Mat_Numbering is next'
+write(*,*) 'hey!-----------------Het_Mat_Numbering is next'
 Call Het_Mat_Numbering    (                                                                                                  &
 NDim, MaxNNode, NDOF, NNeighbor, NParts, NEL, NJ, NEQMTotal,                                                                 & ! Integer Variables
 !                                                                                                                            & ! Real Variables
@@ -430,7 +458,7 @@ PML_DIM, XYZ,                                                                   
 ModelName, OutDir                                                                                                            & ! Characters
 !Nodes                                                                                                                       & ! Type 
 )
-!write(*,*) 'hey!-----------------Het_Mat_Numbering is passed'
+write(*,*) 'hey!-----------------Het_Mat_Numbering is passed'
 
 !do i = 1,nj
 !  write(*,*) i, Node_Mat_ID(i) , Node_Mat_Mapping(i)

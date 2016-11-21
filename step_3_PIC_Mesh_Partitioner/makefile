@@ -13,7 +13,7 @@ info ::
 	@echo "  make SOURCE"
 	@echo "    where SOURCE is one of ${SOURCESF}"
 
-FFLAGS	    = -O3
+FFLAGS	    = -O2 -traceback 
 CPPFLAGS    = 
 FPPFLAGS    =
 LOCDIR      = home/jamesbell/Research/hirensi/step_3_PIC_Mesh_Partitioner

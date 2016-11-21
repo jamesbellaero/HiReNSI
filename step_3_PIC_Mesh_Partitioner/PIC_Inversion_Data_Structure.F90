@@ -141,7 +141,7 @@ Integer (Kind=Smll)  :: IO_Write ;               ! Used for IOSTAT - Input Outpu
 Integer (Kind=Smll), PARAMETER  :: Un_Inversion_DS     = 811  ;            ! the Unit number of Inversion Data Structure index sets
 
 ! =========================== Subroutine CODE =======================================================================================================
-
+write(*,*) "Begin subroutine < InversionDS >"
   Do IParts = 1_Shrt, NParts ;
 
 ! I. building material vectors, associated mappings and scatters ------------------------------------------------------------------------------------ checked, works!
@@ -176,7 +176,6 @@ Integer (Kind=Smll), PARAMETER  :: Un_Inversion_DS     = 811  ;            ! the
 !         idx_Mat_to   ( Local_PETSc_Num ( IJ, IParts ) ) = Local_PETSc_Num ( IJ, IParts )
       End If 
     End Do
-
     ! idx_Mat_to can be constructed in the main program as follows:
     ! ForAll ( I = 1:NJ_Rank ( IParts ) ) idx_Mat_to (I) = I-1
 
@@ -190,24 +189,31 @@ Integer (Kind=Smll), PARAMETER  :: Un_Inversion_DS     = 811  ;            ! the
 
 
     ! Obtanining the size of Global nodes owned by each rank. -------------------------------------
+    
     If ( IParts == 1_Shrt ) then ;
       NJ_Mapping = NNodeRank ( IParts ) ;
     Else ;
       NJ_Mapping = NNodeRank ( IParts ) - NNodeRank ( IParts - 1_Shrt ) ;
     End If ;
-
     Allocate ( idx_Mat_Extend_from (NJ_Mapping), idx_Mat_Extend_to (NJ_Mapping) )
-
+    write(*,*) "NJ: ",NJ_Mapping
     ! Construct index sets - size of idx_Mat_Extend_from / idx_Mat_Extend_to is NJ_Mapping. ------- $ $ $ $ $ $ $ $ $ $
     Counter = 0_Lng
     Do IJ = 1_Lng, NJ
       If ( NPart ( IJ ) == IParts ) Then
+       ! if(Counter>NJ_Mapping) then
+        !  write(*,*) "shite",Counter,NJ_Mapping,IJ,size(Node_Mat_Mapping),size(Global_PETSc_Num),size(idx_Mat_Extend_from);
+         ! write(*,*) Node_Mat_Mapping(IJ);
+        !end if
+        
         Counter = Counter + 1_Lng 
         idx_Mat_Extend_from ( Counter ) = Global_PETSc_Num ( Node_Mat_Mapping ( IJ ) )
         idx_Mat_Extend_to   ( Counter ) = Global_PETSc_Num (                  ( IJ ) )
+      else if(1==1) then
+        write(*,*) IParts,NPart(IJ)
       End If
     End Do
-
+    write(*,*) "abc"
     ! Double check -------------------------------------------------------------------------------- $ $ $ $ $ $ $ $ $ $
     If ( Counter /= NJ_Mapping ) Then
        Write(*,*) ' Wrong in II Inv-DS '; Stop
@@ -269,7 +275,7 @@ Integer (Kind=Smll), PARAMETER  :: Un_Inversion_DS     = 811  ;            ! the
 
     ! Find which equation numbers need to be stored. ----------------------------------------------
     Allocate ( U_Store_Numbers_Global ( NStore_Mapping ), idx_u_from ( NStore_Rank ), idx_u_to ( NStore_Rank ) )
-
+    write(*,*) "abc"
     ! Obtaining equation numbers of the nodes that need to be stored. -----------------------------
     Counter = 0_Lng ;
     Do IJ = 1_Lng, NJ ;
@@ -320,7 +326,7 @@ Integer (Kind=Smll), PARAMETER  :: Un_Inversion_DS     = 811  ;            ! the
           ID_Local ( Local_PETSc_Num ( IJ, IParts ), : ) = ID ( IJ, : ) ;
         End If ;
       End Do ;
-
+    write(*,*) "Obtaining local equation numbers"
     ! Modified Number of Equations for each rank
     ! Obtaining the Local Equation Number
     LEqN = 0_Lng ;
@@ -436,8 +442,6 @@ Return ;
 1006    Write(*       , Fmt_Write1 ) UnFile, IO_Write ; Write( UnFile, Fmt_Write1 ) UnFile, IO_Write ;
         !#Call BEEP_FAIL ;
         Write(*, Fmt_FL) ;  Write(UnInf, Fmt_FL) ; Write(*, Fmt_End) ; Read(*,*) ;  STOP ;
-
-
 End Subroutine Inversion_DS ;
 
 End Module Inversion_Data_Structure ;

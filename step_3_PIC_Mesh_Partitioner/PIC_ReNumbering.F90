@@ -166,7 +166,6 @@ Check = .False. ;
 ! 3- We first number the nodes that belong only to each rank, than, we number the ghost nodes. We use the variable repeatation for this aim.
 
 Write (*,*)"ReNumbering:: PETSc global numbering ..."
-
 GPETScNodeNum        = 0_Lng ; ! Global PETSc Node Numbering
 Global_PETSc_Num (:) = 0_Lng ; ! Global PETSc Numbering
 
@@ -183,7 +182,7 @@ Global_PETSc_Num (:) = 0_Lng ; ! Global PETSc Numbering
                   GPETScNodeNum = GPETScNodeNum + 1 ;
                   Global_PETSc_Num ( IJ ) = GPETScNodeNum ;
 ! ----------------- added for inversion DS ------
-                  NPart(IJ) = IParts
+                  NPart(IJ) = IParts                  
 ! -----------------------------------------------
 
                   ! Finding number of equations related to this node and rank
@@ -211,7 +210,6 @@ Global_PETSc_Num (:) = 0_Lng ; ! Global PETSc Numbering
           End Do ; ! End loop on the Nparts
         NEqRank   ( IParts ) = ILocalRow ;      ! Number of Equations each rank stores in its own memory.
         NNodeRank ( IParts ) = GPETScNodeNum ;  ! Maximum PETSc node number saved on this rank.
-
   End Do ;
 
 ! Modifying Equation Numbers
@@ -247,7 +245,6 @@ ApplicationEqN = 0_Lng ;
 ID_Application = ID ;
 
 Write (*,*)"ReNumbering:: Application equation numbering..."
-
   DO I = 1, NJ ;
     DO J = 1, NDOF ;
       IF ( ID_Application ( I, J ) == 1 ) Then ;
@@ -256,17 +253,20 @@ Write (*,*)"ReNumbering:: Application equation numbering..."
         ApplicationEqN = ApplicationEqN + 1 ;
         ID_Application ( I, J ) = ApplicationEqN ;
       Else ;
-        Write (*,*)"A major mistake in constraints array - see numbering subroutine"
+        Write (*,*)"A major mistake in constraints array - see numbering subroutine ",I,J,(I-1)*NDOF+J, ID_Application(I,J)
         Stop;
       End If ;
     End Do ;
   End Do ;
 
 NEQMTotal = ApplicationEqN ;
-
+Write(*,*) "ReNumbering:: Finished application renumbering"
 ! - PETSc Equation number ---------------------------------------------------------------------------------------------------------------------------
-ForAll ( IJ = 1:NJ, IDOF = 1:NDOF ) ID_PETSc ( Global_PETSc_Num ( IJ ), IDOF ) = ID ( IJ, IDOF ) ;
-
+Do IJ=1,NJ;        
+  Do IDOF=1,NDOF;
+   ID_PETSc ( Global_PETSc_Num ( IJ ), IDOF ) = ID ( IJ, IDOF ) ;
+  end do;
+end do;
 PETScEqN = 0_Lng ;
 
 Write (*,*)"ReNumbering:: PETSc equation numbering..."
