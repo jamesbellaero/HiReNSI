@@ -15,7 +15,7 @@
 
 Module Mat_Vis_HDF5 ;
 
-Use HDF5 ;
+Use hdf5 ;
 Use Parameters ;
 
 
@@ -52,7 +52,7 @@ ModelName, OutDir                                                               
 
 
 Implicit None ;
-#include "finclude/petscsys.h"
+!#include "finclude/petscsys.h"
 !#include "metis.h"
 
 ! =========================== Global Variables ======================================================================================================
@@ -88,7 +88,7 @@ Type ( NodeID )      :: Nodes ;
 Type ( BasicParam )  :: Param ;                  ! Holds basic parameters of each load case
 
 ! =========================== LOCAL Variables =======================================================================================================
-PetscErrorCode :: ErrPTC ;                       ! Error 
+Integer :: ErrHDF5 ;                       ! Error 
 
 ! - Integer Variables -------------------------------------------------------------------------------------------------------------------------------
 Integer (Kind=Tiny)  :: NNode ;                  ! Number of Nodes
@@ -167,7 +167,7 @@ Write (*,*)"Output Material-Visualization HDF5"
 
     ! - Computations --------------------------------------------------------------------------------------------------------------------------------
     ! Create files based on HDF5 format for large files
-    Call h5open_f(ErrPTC)
+    Call h5open_f(ErrHDF5)
 
     ! - Paraview geometry file  ---------------------------------------------------------------------------------------------------------------------
     ! determine the number of nodes in the model for Paraview model
@@ -227,7 +227,7 @@ Write (*,*)"Output Material-Visualization HDF5"
     DeAllocate ( ParaNodeNum ) ;
 
     Print *, 'OutDir - Parview', OutDir ;
-    Call h5fcreate_f( TRIM(OutDir)//'/'//TRIM(ModelName)//'_'//'Data_Mat_Vis_PV'//'_'//Trim(AdjustL(IndexSize))//'_'//Trim(AdjustL(IndexRank))//'.h5', H5F_ACC_TRUNC_F, id_Data_Mat_Vis_PV, ErrPTC) ;         ! Index number of DOFs in Paraview to retrive data from the solution vector
+    Call h5fcreate_f( TRIM(OutDir)//'/'//TRIM(ModelName)//'_'//'Data_Mat_Vis_PV'//'_'//Trim(AdjustL(IndexSize))//'_'//Trim(AdjustL(IndexRank))//'.h5', H5F_ACC_TRUNC_F, id_Data_Mat_Vis_PV, ErrHDF5) ;         ! Index number of DOFs in Paraview to retrive data from the solution vector
 
     Allocate ( dset_data_int( NJ_Para ) ) ;
 
@@ -254,8 +254,8 @@ Write (*,*)"Output Material-Visualization HDF5"
 
     dims(1) = NE_Mat_Vis_Para ;
     dims(2) = 1 ;
-    Call h5screate_simple_f(2, dims, dspace_id_IS_Mat_Vis_PV, ErrPTC) ;
-    Call h5dcreate_f(id_Data_Mat_Vis_PV, "IndexSet_Mat_Vis",     H5T_NATIVE_INTEGER, dspace_id_IS_Mat_Vis_PV, dset_id_IS_Mat_Vis_PV,   ErrPTC) ;
+    Call h5screate_simple_f(2, dims, dspace_id_IS_Mat_Vis_PV, ErrHDF5) ;
+    Call h5dcreate_f(id_Data_Mat_Vis_PV, "IndexSet_Mat_Vis",     H5T_NATIVE_INTEGER, dspace_id_IS_Mat_Vis_PV, dset_id_IS_Mat_Vis_PV,   ErrHDF5) ;
 
     dset_data_int = dset_data_int - 1 ; ! Equation numbers start from 0 in PETSc >>> see if this has already been done.
 
@@ -266,7 +266,7 @@ Write (*,*)"Output Material-Visualization HDF5"
     ! Write the dataset for index setting of the equation numbers
     data_dims(1) = NE_Mat_Vis_Para ;
     data_dims(2) = 1 ;
-    Call h5dwrite_f(dset_id_IS_Mat_Vis_PV, H5T_NATIVE_INTEGER, dset_data_int, data_dims, ErrPTC)
+    Call h5dwrite_f(dset_id_IS_Mat_Vis_PV, H5T_NATIVE_INTEGER, dset_data_int, data_dims, ErrHDF5)
 
     DeAllocate ( dset_data_int ) ;
 
@@ -281,10 +281,10 @@ Write (*,*)"Output Material-Visualization HDF5"
 
 
     ! Close the HDF5 file.
-    CALL h5fclose_f( id_Data_Mat_Vis_PV, ErrPTC) ;
+    CALL h5fclose_f( id_Data_Mat_Vis_PV, ErrHDF5) ;
 
     ! Shut down HDF5.
-    CALL h5close_f(ErrPTC) ;
+    CALL h5close_f(ErrHDF5) ;
 
     ! - ---------------------------------------------------------------------------------------------------------------------------------------------
     Write (*,*)"Opening files for Mat_Vis ...";

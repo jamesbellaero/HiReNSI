@@ -74,7 +74,7 @@ Real    (Kind=DBL ), PARAMETER, Dimension(6), PUBLIC  :: FVAL_3D  = (/ +1._DBL, 
 !#Integer (Kind=Shrt), PARAMETER, PUBLIC  ::  ;
 
 ! =========================== FORMATS ===============================================================================================================
-Character(87 ), PARAMETER, PUBLIC   :: Fmt_DATE        = "(' DATE :  ',I2.2,' - ',I2.2,' - ',I4,/,' TIME : ',I2.2,':',I2.2,':',I2.2,':',I2.2,/ )" ;
+Character(87 ), PARAMETER, PUBLIC   :: Fmt_DATE        = "(' DATE :  ',I2.2,' - ',I2.2,' - ',I4,/,' TIME : ',I2.2,':',I2.2,':',I2.2,':',I2.2,/ )" 
 Character(27 ), PARAMETER, PUBLIC   :: Fmt_End         = "('PRESS ENTER TO End ...')" ;
 Character(80 ), PARAMETER, PUBLIC   :: Fmt_ERR1_OPEN   = "( 'ERROR IN OPEN STATEMENT. Unit NUMBER = ', I3, '   ERROR NUMBER IS = ', I4  )" ;
 Character(91 ), PARAMETER, PUBLIC   :: Fmt_ERR2_OPEN   = "('End-OF-FILE ERROR IN OPEN STATEMENT. Unit NUMBER = ', I3, '   ERROR NUMBER IS = ', I4  )" ;

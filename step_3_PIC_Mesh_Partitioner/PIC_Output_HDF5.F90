@@ -15,7 +15,7 @@
 
 Module Partition_Output_HDF5 ;
 
-Use HDF5 ;
+Use hdf5 ;
 Use Parameters ;
 
 
@@ -52,7 +52,7 @@ Nodes, Param                                                                    
 
 
 Implicit None ;
-#include "finclude/petscsys.h"
+!#include "finclude/petscsys.h"
 !#include "metis.h"
 
 ! =========================== Global Variables ======================================================================================================
@@ -95,7 +95,7 @@ Type ( NodeID )      :: Nodes ;
 Type ( BasicParam )  :: Param ;                  ! Holds basic parameters of each load case
 
 ! =========================== LOCAL Variables =======================================================================================================
-PetscErrorCode :: ErrPTC ;                       ! Error 
+Integer :: ErrHDF5 ;                       ! Error 
 
 ! - Integer Variables -------------------------------------------------------------------------------------------------------------------------------
 Integer (Kind=Tiny)  :: NNode ;                  ! Number of Nodes
@@ -484,49 +484,49 @@ NEqM_Verifier = NEqM_Verifier + NEqM_Mapping ;
     Open ( Unit = UnFile, FILE = TRIM(ModelName)//'_'//Trim(AdjustL(IndexSize))//'_'//Trim(AdjustL(IndexRank))//'.Mat', ERR =  1001, IOSTAT = IO_File, ACCESS = 'SEQUENTIAL', ACTION ='Write', ASYNCHRONOUS = 'NO', BLANK = 'NULL', BLOCKSIZE = 0, DEFAULTFILE = TRIM(OutDir), DisPOSE = 'KEEP', FORM = 'FORMATTED', POSITION = 'ASIS', STATUS ='REPLACE') ;
 
     ! Create files based on HDF5 format for large files (connectivity, coordinates, constraints, ...   )
-    Call h5open_f(ErrPTC)
+    Call h5open_f(ErrHDF5)
 
-    Call h5fcreate_f( TRIM(OutDir)//'/'//TRIM(ModelName)//'_'//'Geometry'//'_'//Trim(AdjustL(IndexSize))//'_'//Trim(AdjustL(IndexRank))//'.h5', H5F_ACC_TRUNC_F, id_Geo, ErrPTC) ;      ! Geometry file for input files
+    Call h5fcreate_f( TRIM(OutDir)//'/'//TRIM(ModelName)//'_'//'Geometry'//'_'//Trim(AdjustL(IndexSize))//'_'//Trim(AdjustL(IndexRank))//'.h5', H5F_ACC_TRUNC_F, id_Geo, ErrHDF5) ;      ! Geometry file for input files
 
     ! - Create the dataspaces
     ! Coordinate file for the main code(.XYZ)
     dims(1) = NJ_Rank ( IParts ) ;
     dims(2) = NDim ;
-    Call h5screate_simple_f(2, dims, dspace_id_XYZ, ErrPTC) ;
+    Call h5screate_simple_f(2, dims, dspace_id_XYZ, ErrHDF5) ;
 
     ! Connectivity file for the main code (.Cnn)
     dims(1) = NEL_Rank ( IParts ) ;
     dims(2) = MaxNNode + 3_Tiny ;
-    Call h5screate_simple_f(2, dims, dspace_id_Cnn, ErrPTC) ;
+    Call h5screate_simple_f(2, dims, dspace_id_Cnn, ErrHDF5) ;
 
     ! Coordinate file (.Cnt)
     dims(1) = NJ_Rank ( IParts ) ;
     dims(2) = NDOF ;
-    Call h5screate_simple_f(2, dims, dspace_id_Cnt, ErrPTC) ;
+    Call h5screate_simple_f(2, dims, dspace_id_Cnt, ErrHDF5) ;
 
     ! Application Numbering file (.App)
     dims(1) = 1_Shrt ;
     dims(2) = NEqM_Mapping ;
     !dims(2) = 3000000 ;
-    Call h5screate_simple_f(2, dims, dspace_id_App, ErrPTC) ;
+    Call h5screate_simple_f(2, dims, dspace_id_App, ErrHDF5) ;
 
     ! PETSc Numbering file (.PTC)
     dims(1) = 1_Shrt ;
     dims(2) = NEqM_Mapping ;
-    Call h5screate_simple_f(2, dims, dspace_id_PTC, ErrPTC) ;
+    Call h5screate_simple_f(2, dims, dspace_id_PTC, ErrHDF5) ;
 
     ! Indices file (.Ind)
     dims(1) = 1_Shrt ;
     dims(2) = NEqM ;
-    Call h5screate_simple_f(2, dims, dspace_id_Ind, ErrPTC) ;
+    Call h5screate_simple_f(2, dims, dspace_id_Ind, ErrHDF5) ;
 
     ! Create the dataset with default properties.
-    Call h5dcreate_f(id_Geo, "XYZ",             H5T_NATIVE_DOUBLE,  dspace_id_XYZ, dset_id_XYZ, ErrPTC) ;
-    Call h5dcreate_f(id_Geo, "Connectivity",    H5T_NATIVE_INTEGER, dspace_id_Cnn, dset_id_Cnn, ErrPTC) ;
-    Call h5dcreate_f(id_Geo, "Constraints",     H5T_NATIVE_INTEGER, dspace_id_Cnt, dset_id_Cnt, ErrPTC) ;   ! see type of integers for large numbers
-    Call h5dcreate_f(id_Geo, "ApplicationNum",  H5T_NATIVE_INTEGER, dspace_id_App, dset_id_App, ErrPTC) ;   ! see type of integers for large numbers
-    Call h5dcreate_f(id_Geo, "PETScNum",        H5T_NATIVE_INTEGER, dspace_id_App, dset_id_PTC, ErrPTC) ;   ! see type of integers for large numbers
-    Call h5dcreate_f(id_Geo, "Indices",         H5T_NATIVE_INTEGER, dspace_id_Ind, dset_id_Ind, ErrPTC) ;   ! see type of integers for large numbers
+    Call h5dcreate_f(id_Geo, "XYZ",             H5T_NATIVE_DOUBLE,  dspace_id_XYZ, dset_id_XYZ, ErrHDF5) ;
+    Call h5dcreate_f(id_Geo, "Connectivity",    H5T_NATIVE_INTEGER, dspace_id_Cnn, dset_id_Cnn, ErrHDF5) ;
+    Call h5dcreate_f(id_Geo, "Constraints",     H5T_NATIVE_INTEGER, dspace_id_Cnt, dset_id_Cnt, ErrHDF5) ;   ! see type of integers for large numbers
+    Call h5dcreate_f(id_Geo, "ApplicationNum",  H5T_NATIVE_INTEGER, dspace_id_App, dset_id_App, ErrHDF5) ;   ! see type of integers for large numbers
+    Call h5dcreate_f(id_Geo, "PETScNum",        H5T_NATIVE_INTEGER, dspace_id_App, dset_id_PTC, ErrHDF5) ;   ! see type of integers for large numbers
+    Call h5dcreate_f(id_Geo, "Indices",         H5T_NATIVE_INTEGER, dspace_id_Ind, dset_id_Ind, ErrHDF5) ;   ! see type of integers for large numbers
 
     ! - Main code geometry file  --------------------------------------------------------------------------------------------------------------------
     ! Coordinates of nodes for the main code - HDF5
@@ -544,7 +544,7 @@ NEqM_Verifier = NEqM_Verifier + NEqM_Mapping ;
     ! Write the dataset.
     data_dims(1) = NJ_Rank ( IParts ) ;
     data_dims(2) = NDim ;
-    Call h5dwrite_f(dset_id_XYZ, H5T_NATIVE_DOUBLE, dset_data_real, data_dims, ErrPTC)
+    Call h5dwrite_f(dset_id_XYZ, H5T_NATIVE_DOUBLE, dset_data_real, data_dims, ErrHDF5)
 
     DeAllocate ( dset_data_real ) ;
 
@@ -598,7 +598,7 @@ NEqM_Verifier = NEqM_Verifier + NEqM_Mapping ;
 
     data_dims(1) = NEL_Rank ( IParts ) ;
     data_dims(2) = MaxNNode + 3_Tiny ;
-    Call h5dwrite_f(dset_id_Cnn, H5T_NATIVE_INTEGER, dset_data_int, data_dims, ErrPTC ) ;
+    Call h5dwrite_f(dset_id_Cnn, H5T_NATIVE_INTEGER, dset_data_int, data_dims, ErrHDF5 ) ;
 
     DeAllocate ( dset_data_int ) ;
 
@@ -662,29 +662,29 @@ NEqM_Verifier = NEqM_Verifier + NEqM_Mapping ;
 
     DeAllocate ( ParaNodeNum ) ;
     Print *, 'OutDir - Parview', OutDir ;
-    Call h5fcreate_f( TRIM(OutDir)//'/'//TRIM(ModelName)//'_'//'Geometry_PV'//'_'//Trim(AdjustL(IndexSize))//'_'//Trim(AdjustL(IndexRank))//'.h5', H5F_ACC_TRUNC_F, id_Geo_PV, ErrPTC) ;      ! Geometry file for Paraview
-    Call h5fcreate_f( TRIM(OutDir)//'/'//TRIM(ModelName)//'_'//'Data_PV'//'_'//Trim(AdjustL(IndexSize))//'_'//Trim(AdjustL(IndexRank))//'.h5', H5F_ACC_TRUNC_F, id_Data_PV, ErrPTC) ;         ! Index number of DOFs in Paraview to retrive data from the solution vector
+    Call h5fcreate_f( TRIM(OutDir)//'/'//TRIM(ModelName)//'_'//'Geometry_PV'//'_'//Trim(AdjustL(IndexSize))//'_'//Trim(AdjustL(IndexRank))//'.h5', H5F_ACC_TRUNC_F, id_Geo_PV, ErrHDF5) ;      ! Geometry file for Paraview
+    Call h5fcreate_f( TRIM(OutDir)//'/'//TRIM(ModelName)//'_'//'Data_PV'//'_'//Trim(AdjustL(IndexSize))//'_'//Trim(AdjustL(IndexRank))//'.h5', H5F_ACC_TRUNC_F, id_Data_PV, ErrHDF5) ;         ! Index number of DOFs in Paraview to retrive data from the solution vector
 
     ! Coordinate file for Paraview (.XYZ)
     dims(2) = NJ_Para ;
     dims(1) = 3 ; !NDim ; ! This always should be 3. For 3D models set the third dimension to zero.
 
-    Call h5screate_simple_f(2, dims, dspace_id_XYZ_PV, ErrPTC) ;
+    Call h5screate_simple_f(2, dims, dspace_id_XYZ_PV, ErrHDF5) ;
 
     ! Equation number of nodes (DOFs) on this rank used to retrieve solution for Paraview
     dims(1) = NJ_Para ;
     dims(2) = NDim ;
-    Call h5screate_simple_f(2, dims, dspace_id_Node_PV, ErrPTC) ;
+    Call h5screate_simple_f(2, dims, dspace_id_Node_PV, ErrHDF5) ;
 
     ! Connectivity file for Paraview (.Cnn)
     dims(2) = ConnSizePara;
     dims(1) = 1_Smll ;
-    Call h5screate_simple_f(2, dims, dspace_id_Cnn_PV, ErrPTC) ;
+    Call h5screate_simple_f(2, dims, dspace_id_Cnn_PV, ErrHDF5) ;
 
-    !Call h5dcreate_f(id_Geo_PV,  "XYZ",          H5T_NATIVE_REAL,     dspace_id_XYZ_PV,  dset_id_XYZ_PV,  ErrPTC) ;
-    Call h5dcreate_f(id_Geo_PV,  "XYZ",          H5T_NATIVE_DOUBLE,  dspace_id_XYZ_PV,  dset_id_XYZ_PV,  ErrPTC) ;
-    Call h5dcreate_f(id_Geo_PV,  "Connectivity", H5T_NATIVE_INTEGER, dspace_id_Cnn_PV,  dset_id_Cnn_PV,  ErrPTC) ;
-    Call h5dcreate_f(id_Data_PV, "EquationNum",  H5T_NATIVE_INTEGER, dspace_id_Node_PV, dset_id_Node_PV, ErrPTC) ;
+    !Call h5dcreate_f(id_Geo_PV,  "XYZ",          H5T_NATIVE_REAL,     dspace_id_XYZ_PV,  dset_id_XYZ_PV,  ErrHDF5) ;
+    Call h5dcreate_f(id_Geo_PV,  "XYZ",          H5T_NATIVE_DOUBLE,  dspace_id_XYZ_PV,  dset_id_XYZ_PV,  ErrHDF5) ;
+    Call h5dcreate_f(id_Geo_PV,  "Connectivity", H5T_NATIVE_INTEGER, dspace_id_Cnn_PV,  dset_id_Cnn_PV,  ErrHDF5) ;
+    Call h5dcreate_f(id_Data_PV, "EquationNum",  H5T_NATIVE_INTEGER, dspace_id_Node_PV, dset_id_Node_PV, ErrHDF5) ;
 
     Write (*,*)"Write Data for Paraview - Coordinates..." ;
 
@@ -711,7 +711,7 @@ NEqM_Verifier = NEqM_Verifier + NEqM_Mapping ;
     ParamPartition%IntM ( 5, 2) = NJ_Para ;
     data_dims(2) = NJ_Para ;
     data_dims(1) = 3 ; ! NDim ;
-    Call h5dwrite_f(dset_id_XYZ_PV, H5T_NATIVE_DOUBLE, dset_data_real, data_dims, ErrPTC)
+    Call h5dwrite_f(dset_id_XYZ_PV, H5T_NATIVE_DOUBLE, dset_data_real, data_dims, ErrHDF5)
 
     ! Equation number of nodes on this rank used to extract data of each node for Paraview
     ! Remark: We already have equation numbers of this rank in Indices vector; However, we cannot use this vector to scatter solution for Paraview, because Paraview does not support Spectral Elements. Hence, we do not need to scatter all solution.
@@ -719,15 +719,15 @@ NEqM_Verifier = NEqM_Verifier + NEqM_Mapping ;
     ParamPartition%IntM ( 5, 1) = NE_Para ;
     dims(1) = NE_Para ;
     dims(2) = 1 ;
-    Call h5screate_simple_f(2, dims, dspace_id_IS_PV, ErrPTC) ;
-    Call h5dcreate_f(id_Data_PV, "IndexSet",     H5T_NATIVE_INTEGER, dspace_id_IS_PV,   dset_id_IS_PV,   ErrPTC) ;
+    Call h5screate_simple_f(2, dims, dspace_id_IS_PV, ErrHDF5) ;
+    Call h5dcreate_f(id_Data_PV, "IndexSet",     H5T_NATIVE_INTEGER, dspace_id_IS_PV,   dset_id_IS_PV,   ErrHDF5) ;
 
     dset_data_int = dset_data_int - 1 ; ! Equation numbers start from 0 in PETSc
 
     ! Write the dataset.
     data_dims(1) = NJ_Para ;
     data_dims(2) = NDim ;
-    Call h5dwrite_f(dset_id_Node_PV, H5T_NATIVE_INTEGER, dset_data_int, data_dims, ErrPTC)
+    Call h5dwrite_f(dset_id_Node_PV, H5T_NATIVE_INTEGER, dset_data_int, data_dims, ErrHDF5)
 
     Allocate ( dset_data_ISet ( NE_Para ) );
 
@@ -749,7 +749,7 @@ NEqM_Verifier = NEqM_Verifier + NEqM_Mapping ;
     ! Write the dataset for index setting of the equation numbers
     data_dims(1) = NE_Para ;
     data_dims(2) = 1 ;
-    Call h5dwrite_f(dset_id_IS_PV, H5T_NATIVE_INTEGER, dset_data_ISet, data_dims, ErrPTC)
+    Call h5dwrite_f(dset_id_IS_PV, H5T_NATIVE_INTEGER, dset_data_ISet, data_dims, ErrHDF5)
 
     DeAllocate ( dset_data_real, dset_data_int, dset_data_ISet ) ;
 
@@ -844,7 +844,7 @@ NEqM_Verifier = NEqM_Verifier + NEqM_Mapping ;
 
     data_dims(2) = ConnSizePara ;
     data_dims(1) = 1 ;
-    Call h5dwrite_f(dset_id_Cnn_PV, H5T_NATIVE_INTEGER, dset_data_int, data_dims, ErrPTC ) ;
+    Call h5dwrite_f(dset_id_Cnn_PV, H5T_NATIVE_INTEGER, dset_data_int, data_dims, ErrHDF5 ) ;
 
     DeAllocate ( dset_data_int ) ;
 
@@ -861,7 +861,7 @@ NEqM_Verifier = NEqM_Verifier + NEqM_Mapping ;
 
     data_dims(1) = NJ_Rank ( IParts ) ;
     data_dims(2) = NDOF ;
-    Call h5dwrite_f( dset_id_Cnt, H5T_NATIVE_INTEGER, dset_data_int, data_dims, ErrPTC ) ;
+    Call h5dwrite_f( dset_id_Cnt, H5T_NATIVE_INTEGER, dset_data_int, data_dims, ErrHDF5 ) ;
 
     DeAllocate ( dset_data_int ) ;
 
@@ -1181,17 +1181,17 @@ NEqM_Verifier = NEqM_Verifier + NEqM_Mapping ;
     data_dims(1) = 1_Shrt ;
     data_dims(2) = NEqM_Mapping;
 
-    Call h5dwrite_f( dset_id_App, H5T_NATIVE_INTEGER, App_Numbers, data_dims, ErrPTC ) ;
+    Call h5dwrite_f( dset_id_App, H5T_NATIVE_INTEGER, App_Numbers, data_dims, ErrHDF5 ) ;
 
     ! PETSc Numbering 
     data_dims(1) = 1 ;
     data_dims(2) = NEqM_Mapping;
-    Call h5dwrite_f( dset_id_PTC, H5T_NATIVE_INTEGER, PETSc_Numbers, data_dims, ErrPTC ) ;
+    Call h5dwrite_f( dset_id_PTC, H5T_NATIVE_INTEGER, PETSc_Numbers, data_dims, ErrHDF5 ) ;
 
     ! Index set (Indices)
     data_dims(1) = 1 ;
     data_dims(2) = NEqM ;
-    Call h5dwrite_f( dset_id_Ind, H5T_NATIVE_INTEGER, Indices, data_dims, ErrPTC ) ;
+    Call h5dwrite_f( dset_id_Ind, H5T_NATIVE_INTEGER, Indices, data_dims, ErrHDF5 ) ;
 
 ! Since we are using a fixed number of nonzeros for all matrices, defined in the main, this part is not required. Uncomment and modify the related subroutines.
 !    ! Number of non-zero entris of PETSc objects
@@ -1251,20 +1251,20 @@ NEqM_Verifier = NEqM_Verifier + NEqM_Mapping ;
     Close ( Unit = UnFile, Status = 'KEEP', ERR =  1002, IOSTAT = IO_File ) ;
 
     ! Close the dataset.
-    Call h5dclose_f( dset_id_XYZ, ErrPTC) ;
-    Call h5dclose_f( dset_id_Cnn, ErrPTC) ;
-    Call h5dclose_f( dset_id_Cnt, ErrPTC) ;
-    Call h5dclose_f( dset_id_App, ErrPTC) ;
-    Call h5dclose_f( dset_id_PTC, ErrPTC) ;
-    Call h5dclose_f( dset_id_Ind, ErrPTC) ;
+    Call h5dclose_f( dset_id_XYZ, ErrHDF5) ;
+    Call h5dclose_f( dset_id_Cnn, ErrHDF5) ;
+    Call h5dclose_f( dset_id_Cnt, ErrHDF5) ;
+    Call h5dclose_f( dset_id_App, ErrHDF5) ;
+    Call h5dclose_f( dset_id_PTC, ErrHDF5) ;
+    Call h5dclose_f( dset_id_Ind, ErrHDF5) ;
 
     ! Close the HDF5 file.
-    CALL h5fclose_f( id_Geo,     ErrPTC) ;
-    CALL h5fclose_f( id_Geo_PV,  ErrPTC) ;
-    CALL h5fclose_f( id_Data_PV, ErrPTC) ;
+    CALL h5fclose_f( id_Geo,     ErrHDF5) ;
+    CALL h5fclose_f( id_Geo_PV,  ErrHDF5) ;
+    CALL h5fclose_f( id_Data_PV, ErrHDF5) ;
 
     ! Shut down HDF5.
-    CALL h5close_f(ErrPTC) ;
+    CALL h5close_f(ErrHDF5) ;
 
   End Do ;
 

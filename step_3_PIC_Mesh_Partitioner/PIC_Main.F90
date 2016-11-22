@@ -44,10 +44,10 @@ Use Mat_Vis_HDF5 ;             ! material visualization
 Implicit None ;
 
 ! =========================== PETSC LIBRARIES =======================================================================================================
-#include "finclude/petscsys.h"
-#include "finclude/petscvec.h"
-#include "finclude/petscmat.h"
-#include "finclude/petscvec.h90"
+!#include "finclude/petscsys.h"
+!#include "finclude/petscvec.h"
+!#include "finclude/petscmat.h"
+!#include "finclude/petscvec.h90"
 !#include "metis.h"
 
 ! ============================ PETSC Variables AND OBJECTS ==========================================================================================
@@ -56,7 +56,7 @@ Implicit None ;
 !Mat            :: ;
 
 ! - PETSC INTERNAL Variables ------------------------------------------------------------------------------------------------------------------------
-PetscErrorCode :: ErrPTC ;                       ! Error
+Integer :: ErrHDF5 ;                       ! Error
 !PetscTruth     :: FLG ;                         ! Flag
 PetscMPIInt    :: Size ;                         ! Total number of ranks
 PetscMPIInt    :: Rank ;                         ! Rank number
@@ -88,9 +88,9 @@ allocate(options(0:40));
 
 Call METIS_SetDefaultOptions(options);
 options=-1;
-Call PetscInitialize ( PETSC_NULL_Character  , ErrPTC ) ;
-Call MPI_Comm_size   ( PETSC_COMM_WORLD, SIZE, ErrPTC ) ;
-Call MPI_Comm_rank   ( PETSC_COMM_WORLD, RANK, ErrPTC ) ;
+Call PetscInitialize ( PETSC_NULL_Character  , ErrHDF5 ) ;
+Call MPI_Comm_size   ( PETSC_COMM_WORLD, SIZE, ErrHDF5 ) ;
+Call MPI_Comm_rank   ( PETSC_COMM_WORLD, RANK, ErrHDF5 ) ;
 
 ! =========================== TIME AND DATE =========================================================================================================
 Call CPU_TIME( TimeS )  ;
@@ -618,7 +618,7 @@ Write(*, Fmt_End) ;
 
 
 ! - SHUT DOWN PETSC ---------------------------------------------------------------------------------------------------------------------------------
-Call PetscFinalize ( ErrPTC ) ;
+Call PetscFinalize ( ErrHDF5 ) ;
 
 !#Read(*,*);
 STOP ;
