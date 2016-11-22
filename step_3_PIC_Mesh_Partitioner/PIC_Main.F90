@@ -40,9 +40,9 @@ Use Partition_Output_HDF5 ;
 Use Heterogeneous_Material ;   ! mappings for heterogeneous materials
 Use Inversion_Data_Structure ; ! data structure for inversion
 Use Mat_Vis_HDF5 ;             ! material visualization
-
+Use mpi;
 Implicit None ;
-
+External METIS_PartMeshDual
 ! =========================== PETSC LIBRARIES =======================================================================================================
 !#include "finclude/petscsys.h"
 !#include "finclude/petscvec.h"
@@ -58,8 +58,8 @@ Implicit None ;
 ! - PETSC INTERNAL Variables ------------------------------------------------------------------------------------------------------------------------
 Integer :: ErrHDF5 ;                       ! Error
 !PetscTruth     :: FLG ;                         ! Flag
-PetscMPIInt    :: Size ;                         ! Total number of ranks
-PetscMPIInt    :: Rank ;                         ! Rank number
+Integer    :: MPI_Size ;                         ! Total number of ranks
+Integer    :: MPI_Rank ;                         ! Rank number
 
 ! - PETSC Variables ---------------------------------------------------------------------------------------------------------------------------------
 !#PetscInt       ::  ;
@@ -86,11 +86,11 @@ Character(20) :: temp_var;
 
 allocate(options(0:40));
 
-Call METIS_SetDefaultOptions(options);
+
 options=-1;
-Call PetscInitialize ( PETSC_NULL_Character  , ErrHDF5 ) ;
-Call MPI_Comm_size   ( PETSC_COMM_WORLD, SIZE, ErrHDF5 ) ;
-Call MPI_Comm_rank   ( PETSC_COMM_WORLD, RANK, ErrHDF5 ) ;
+Call MPI_Init ( ErrHDF5 ) ;
+Call MPI_Comm_size   ( MPI_COMM_WORLD, MPI_Size, ErrHDF5 ) ;
+Call MPI_Comm_rank   ( MPI_COMM_WORLD, MPI_Rank, ErrHDF5 ) ;
 
 ! =========================== TIME AND DATE =========================================================================================================
 Call CPU_TIME( TimeS )  ;
@@ -293,21 +293,22 @@ Write (*,*)"Allocating arrays ..."
   If ( NParts > 1_Shrt ) Then ;
 
     If ( MetisType == 0_Tiny ) Then ; ! Metis Version 4.0
-      Write(*    ,*) "Partitioning in METIS version 4.0 ...", NEL, NJG, ETypeG, NParts ;
+      Write(*    ,*) "Partitioning in METIS version 4.0 ..." ;
       Allocate (NPart ( NJG ))
         !Do IEl = 1,NEl ;
         !  Write(Un_CHK,"(8(I10))")(ELMNTS((IEl-1)*8+J),J=1,8)
         !End Do ;
 
-write(*,*)'-----------------before Metis',ETypeG
+write(*,*)'-----------------before Metis'
       Call METIS_PartMeshDual  ( NEl, NJG, ELMNTS, ETypeG, NumFlag, NParts, Edgecut, EPart , NPart  ) ;
 
       Write(*    ,*) "End subroutine < Metis Version 4.0 >" ;
       Write(UnInf,*) "End subroutine < Metis Version 4.0 >" ;
     Else If ( MetisType == 1_Tiny ) Then ; ! ParMetis Version 3.2
-      Call ParMetis_V3_PartMeshKway ( ElmDist, eptr, eind2, ElmWgt, Wgtflag, NumFlag, ncon, NCommonNodes, NParts, tpwgts2, ubvec, Poptions, EdgeCut, EPart, PETSC_COMM_WORLD ) ;
-      write(*    ,*) "End subroutine < ParMetis Version 3.2 >"
-      write(UnInf,*) "End subroutine < ParMetis Version 3.2 >"
+     ! Call ParMetis_V3_PartMeshKway ( ElmDist, eptr, eind2, ElmWgt, Wgtflag, NumFlag, ncon, NCommonNodes, NParts, tpwgts2, ubvec, Poptions, EdgeCut, EPart, MPI_COMM_WORLD ) ;
+    !  write(*    ,*) "End subroutine < ParMetis Version 3.2 >"
+     ! write(UnInf,*) "End subroutine < ParMetis Version 3.2 >"
+       write(*,*) "Parmetis not implement, you must install it yourself and uncomment the ParMetis line."
     Else If ( MetisType == 2_Tiny ) Then ; ! Metis Version 5.1.0
       Write(*    ,*) "Partitioning in METIS version 5.1 ...", NEL, NJG, NParts ;
       !MOptions(:) = 0 ;
@@ -334,14 +335,12 @@ write(*,*)'-----------------before Metis',ETypeG
 !end do ;
 
 !allocate (eind2(0:Neind-1) , NPart ( 0:NJG-1 ))
-allocate (eind2(Neind) , NPart ( NJG ))
+       allocate (eind2(Neind) , NPart ( NJG ))
 
-eind2 = eind(1:Neind) ;
+       eind2 = eind(1:Neind) ;
 
 !      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind(1:Neind), Vwgt, VSize, NCommonNodes, NParts,  tpwgts, MOptions, ObjVal, EPart, NPart(1:NJG) ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
-!      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind(0:Neind-1), 0, 0, NCommonNodes, NParts,  0, 0, ObjVal, EPart, NPart (0:NJG-1) ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
-      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind2, vwgt_null,vsize_null, NCommonNodes, NParts,  tpwgts_null, options, ObjVal, EPart, NPart ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
-      !Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind2, PVWgt, PVSize, NCommonNodes, NParts,  Ptpwgts, PMoptions, ObjVal, EPart, NPart ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
+!      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind2, vwgt_null,vsize_null, NCommonNodes, NParts,  tpwgts_null, options, ObjVal, EPart, NPart ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
 
       write(*    ,*) "End subroutine < Metis Version 5.1.0 >" ;
       Write(UnInf,*) "End subroutine < Metis Version 5.1.0 >" ;

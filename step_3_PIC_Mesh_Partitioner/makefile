@@ -1,4 +1,4 @@
-# =================================================================================================================
+#=================================================================================================================
 #
 # Developer    : Babak Poursartip 
 #                The University of Texas at Austin, TX, USA
@@ -13,10 +13,11 @@ info ::
 	@echo "  make SOURCE"
 	@echo "    where SOURCE is one of ${SOURCESF}"
 
-FFLAGS	    = -O2 -I${METIS_DIR}/Lib -I${HDF5_DIR}/include
-FLINKER	    = ${PETSC_DIR}/arch-icc-opt/bin/mpif90 
+FFLAGS	    = -O2 -fPIC -I${METIS_DIR}/Lib -I${METIS_DIR} -I${METIS_DIR}/Programs -I${HDF5_DIR}/include -I${MPI_DIR}/include
+FLINKER	    = /software/intel/impi/5.1.2.150/intel64/bin/mpiifort 
 CPPFLAGS    = 
 FPPFLAGS    =
+FINCLUDE    = -I${METIS_DIR}/Lib -I${METIS_DIR} -I${METIS_DIR}/Programs -I${HDF5_DIR}/include -I${MPI_DIR}/include
 LOCDIR      = /home/jamesbell/Research/Meshes/Mesh
 
 #ALL_SRC	    :=$(wildcard *.F90)
@@ -37,29 +38,25 @@ SRC         :=  Parameters.o \
                 PIC_MassDampStiffPMLNNZero.o \
                 Assemble.o \
                 PIC_ObjectSize.o \
+                /home/jamesbell/Research/metis/metis-4.0.3/Lib/meshpart.o \
                 PIC_Main.o
 
 OBJS        :=$(patsubst %.F90,%.o,$(SRC))
 
 SOURCESH     = ${METIS_DIR}/Lib/metis.h
 
-LIBS	    = -lmetis -lhdf5_fortran -lhdf5hl_fortran
-LIBDIR	    = -L${METIS_DIR} -L${HDF5_DIR}
+LIBS	    = -lmetis -lhdf5_fortran -lhdf5hl_fortran -lmpifort -lfmpich
+LIBDIR	    = -L${METIS_DIR} -L${HDF5_DIR}/lib -L${MPI_DIR}/lib
 
 MANSEC      = KSP
 #CLEANFILES = rhs.vtk solution.vtk
 
-main2 :  $(SOURCESF)  
-	@echo Linking...
-	-$(FLINKER) $(FFLAGS) $(SOURCESF) -o main *.o
-	@echo Done!
-
 main :  $(OBJS)
 	@echo Linking...
-	@echo $(OBJS)
-	ifort $(LIBDIR) $(LIBS) -o $@ $^
+	$(FLINKER) $(FFLAGS) $(LIBDIR) $(LIBS) -o $@ $^
 %.o:	%.F90
-	ifort $(FFLAGS) -c $<
+	@echo Compiling...
+	$(FLINKER) $(FFLAGS) -c $<
 	@echo Done!
 
 
