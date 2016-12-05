@@ -1,4 +1,4 @@
-#=================================================================================================================
+#================================================================================================================
 #
 # Developer    : Babak Poursartip 
 #                The University of Texas at Austin, TX, USA
@@ -13,11 +13,11 @@ info ::
 	@echo "  make SOURCE"
 	@echo "    where SOURCE is one of ${SOURCESF}"
 
-FFLAGS	    = -O2 -fPIC -I${METIS_DIR}/Lib -I${METIS_DIR} -I${METIS_DIR}/Programs -I${HDF5_DIR}/include -I${MPI_DIR}/include
-FLINKER	    = /software/intel/impi/5.1.2.150/intel64/bin/mpiifort 
+FFLAGS	    = -O2 -fPIC -I${METIS_DIR}/include -I${HDF5_DIR}/include -I${MPI_DIR}/include
+FLINKER     = -ifort#/software/intel/impi/5.1.2.150/intel64/bin/mpiifort 
 CPPFLAGS    = 
 FPPFLAGS    =
-FINCLUDE    = -I${METIS_DIR}/Lib -I${METIS_DIR} -I${METIS_DIR}/Programs -I${HDF5_DIR}/include -I${MPI_DIR}/include
+#FINCLUDE    = -I${METIS_DIR}/Lib -I${METIS_DIR} -I${METIS_DIR}/Programs -I${HDF5_DIR}/include -I${MPI_DIR}/include
 LOCDIR      = /home/jamesbell/Research/Meshes/Mesh
 
 #ALL_SRC	    :=$(wildcard *.F90)
@@ -38,15 +38,16 @@ SRC         :=  Parameters.o \
                 PIC_MassDampStiffPMLNNZero.o \
                 Assemble.o \
                 PIC_ObjectSize.o \
-                /home/jamesbell/Research/metis/metis-4.0.3/Lib/meshpart.o \
+                PIC_Main.o
+                #/home/jamesbell/Research/metis/metis-4.0.3/Lib/meshpart.o \
                 PIC_Main.o
 
 OBJS        :=$(patsubst %.F90,%.o,$(SRC))
 
 SOURCESH     = ${METIS_DIR}/Lib/metis.h
 
-LIBS	    = -lmetis -lhdf5_fortran -lhdf5hl_fortran -lmpifort -lfmpich
-LIBDIR	    = -L${METIS_DIR} -L${HDF5_DIR}/lib -L${MPI_DIR}/lib
+LIBS	    =  -lmpifort -lfmpich -lmetis -lmpi -lmpigf -lhdf5_fortran -lhdf5hl_fortran
+LIBDIR	    = -L${METIS_DIR}/build/Linux-x86_64/libmetis -L${HDF5_DIR}/lib -L${MPI_DIR}/lib -L/software/intel/impi/5.1.2.150/intel64/lib/
 
 MANSEC      = KSP
 #CLEANFILES = rhs.vtk solution.vtk

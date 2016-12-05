@@ -41,8 +41,6 @@ Use Heterogeneous_Material ;   ! mappings for heterogeneous materials
 Use Inversion_Data_Structure ; ! data structure for inversion
 Use Mat_Vis_HDF5 ;             ! material visualization
 Use mpi;
-Implicit None ;
-External METIS_PartMeshDual
 ! =========================== PETSC LIBRARIES =======================================================================================================
 !#include "finclude/petscsys.h"
 !#include "finclude/petscvec.h"
@@ -300,7 +298,7 @@ Write (*,*)"Allocating arrays ..."
         !End Do ;
 
 write(*,*)'-----------------before Metis'
-      Call METIS_PartMeshDual  ( NEl, NJG, ELMNTS, ETypeG, NumFlag, NParts, Edgecut, EPart , NPart  ) ;
+      !Call METIS_PartMeshDual  ( NEl, NJG, ELMNTS, ETypeG, NumFlag, NParts, Edgecut, EPart , NPart  ) ;
 
       Write(*    ,*) "End subroutine < Metis Version 4.0 >" ;
       Write(UnInf,*) "End subroutine < Metis Version 4.0 >" ;
@@ -339,7 +337,7 @@ write(*,*)'-----------------before Metis'
 
        eind2 = eind(1:Neind) ;
 
-!      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind(1:Neind), Vwgt, VSize, NCommonNodes, NParts,  tpwgts, MOptions, ObjVal, EPart, NPart(1:NJG) ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
+      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind(1:Neind), Vwgt, VSize, NCommonNodes, NParts,  tpwgts, MOptions, ObjVal, EPart, NPart(1:NJG) ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
 !      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind2, vwgt_null,vsize_null, NCommonNodes, NParts,  tpwgts_null, options, ObjVal, EPart, NPart ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
 
       write(*    ,*) "End subroutine < Metis Version 5.1.0 >" ;
@@ -617,7 +615,7 @@ Write(*, Fmt_End) ;
 
 
 ! - SHUT DOWN PETSC ---------------------------------------------------------------------------------------------------------------------------------
-Call PetscFinalize ( ErrHDF5 ) ;
+!Call PetscFinalize ( ErrHDF5 ) ;
 
 !#Read(*,*);
 STOP ;
