@@ -7,12 +7,16 @@
 
 ! =============================================== Opening external input files ======================================================================
 ! - Input FILE --------------------------------------------------------------------------------------------------------------------------------------
+write(*,*) 'entered file',UN_ADR
+UN_ADR = 12321;
 UnFile = UN_ADR ;
 Open ( Unit = UnFile, FILE = 'ADDRESS_PTC.TXT', ERR =  1001, IOSTAT = IO_File, ACCESS = 'SEQUENTIAL', ACTION = 'READ', ASYNCHRONOUS = 'NO', BLANK = 'NULL', BLOCKSize = 0, DisPOSE = 'KEEP', FORM = 'FORMATTED', POSITION = 'ASIS', STATUS = 'OLD' ) ;
-
+write(*,*) 'opened address_ptc.txt'
 ! - READ THE Input FILE Name AND DIRECTORIES FROM "ADDRESS FILE" IN THE CURRENT DIRECTORY -----------------------------------------------------------
 Read(UN_ADR,*) ;
+write(*,*) 'gonna read model name'
 Read(UN_ADR,*) ModelName ;
+write(*,*) 'read model name'
 Read(UN_ADR,*) ;
 Read(UN_ADR,*) NAT, Output_Type ;
 Read(UN_ADR,*) ;
@@ -23,12 +27,12 @@ Read(UN_ADR,*) ;
 Read(UN_ADR,*) OutDir ;
 Read(UN_ADR,*) ;
 Read(UN_ADR,*) AnaName ;
-
+write(*,*) 'read everything'
 Ana_InDir   = TRIM(AdjustL (Model_InDir))//'/'//TRIM(AdjustL (ModelName))//'/'//'Analysis' ;
 Model_InDir = TRIM(AdjustL (Model_InDir))//'/'//TRIM(AdjustL (ModelName))//'/'//'Model' ;
 
-!write(*,*) Ana_InDir
-!write(*,*) Model_InDir
+write(*,*) Ana_InDir
+write(*,*) Model_InDir
 
 ! - Input FILE --------------------------------------------------------------------------------------------------------------------------------------
 

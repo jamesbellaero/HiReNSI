@@ -74,18 +74,11 @@ Include 'GlobalVariables.F90'              ! Global Variables used in all codes
 Include 'PIC_GlobalVariables.F90'          ! Global Variables used sepecifically in PIC code
 
 ! ============================ START PETSC LIBRARY ===================================================================================================
-integer, allocatable :: options(:);
+integer :: options(0:40);
 integer, pointer :: vwgt_null=>null(),vsize_null=>null();
 real(kind=8),pointer :: tpwgts_null=>null();
-Character(20) :: temp_var;
 
-
-
-
-allocate(options(0:40));
-
-
-options=-1;
+options=0;
 Call MPI_Init ( ErrHDF5 ) ;
 Call MPI_Comm_size   ( MPI_COMM_WORLD, MPI_Size, ErrHDF5 ) ;
 Call MPI_Comm_rank   ( MPI_COMM_WORLD, MPI_Rank, ErrHDF5 ) ;
@@ -297,8 +290,8 @@ Write (*,*)"Allocating arrays ..."
         !  Write(Un_CHK,"(8(I10))")(ELMNTS((IEl-1)*8+J),J=1,8)
         !End Do ;
 
-write(*,*)'-----------------before Metis'
-      !Call METIS_PartMeshDual  ( NEl, NJG, ELMNTS, ETypeG, NumFlag, NParts, Edgecut, EPart , NPart  ) ;
+write(*,*)'-----------------before Metis', MetisType, NumFlag
+      Call METIS_PartMeshDual  ( NEl, NJG, ELMNTS, ETypeG, NumFlag, NParts, Edgecut, EPart , NPart  ) ;
 
       Write(*    ,*) "End subroutine < Metis Version 4.0 >" ;
       Write(UnInf,*) "End subroutine < Metis Version 4.0 >" ;
@@ -308,7 +301,7 @@ write(*,*)'-----------------before Metis'
      ! write(UnInf,*) "End subroutine < ParMetis Version 3.2 >"
        write(*,*) "Parmetis not implement, you must install it yourself and uncomment the ParMetis line."
     Else If ( MetisType == 2_Tiny ) Then ; ! Metis Version 5.1.0
-      Write(*    ,*) "Partitioning in METIS version 5.1 ...", NEL, NJG, NParts ;
+      Write(*    ,*) "Partitioning in METIS version 5.1 ..."
       !MOptions(:) = 0 ;
       eptr (:)= eptr (:) - 1 ;
       eind (:)= eind (:) - 1 ;
@@ -334,11 +327,12 @@ write(*,*)'-----------------before Metis'
 
 !allocate (eind2(0:Neind-1) , NPart ( 0:NJG-1 ))
        allocate (eind2(Neind) , NPart ( NJG ))
-
+      write(*,*) size(Vwgt),size(VSize),size(tpwgts);
        eind2 = eind(1:Neind) ;
+   
 
-      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind(1:Neind), Vwgt, VSize, NCommonNodes, NParts,  tpwgts, MOptions, ObjVal, EPart, NPart(1:NJG) ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
-!      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind2, vwgt_null,vsize_null, NCommonNodes, NParts,  tpwgts_null, options, ObjVal, EPart, NPart ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
+      Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind(1:NJ), Vwgt, VSize, NCommonNodes, NParts,  tpwgts, options, ObjVal, EPart, NPart(1:NJ) ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
+      !Call METIS_PartMeshDual  ( NEl, NJG, eptr, eind2,vwgt_null,vsize_null, NCommonNodes, NParts,  tpwgts_null, options, ObjVal, EPart, NPart ) ; ! Work on options, see pages 20 and 28 of the manual Metis version 5.1.0.
 
       write(*    ,*) "End subroutine < Metis Version 5.1.0 >" ;
       Write(UnInf,*) "End subroutine < Metis Version 5.1.0 >" ;
@@ -410,7 +404,7 @@ Nodes                                                                           
 
 ! =============================================== Calculating number of non-zero entries of PETSc objects ===========================================
 
-write(*,*) temp_var
+
 Allocate ( D_NNZ_Stiff ( NEqMTotal ), O_NNZ_Stiff ( NEqMTotal ), D_NNZ_Damp ( NEqMTotal ), O_NNZ_Damp ( NEqMTotal ), D_NNZ_Mass ( NEqMTotal ), O_NNZ_Mass ( NEqMTotal ),     STAT = ERR_Alloc ) ;
   IF ( ERR_Alloc /= 0 ) Then ;
     Write (*, Fmt_ALLCT) ERR_Alloc ;  Write (UnInf, Fmt_ALLCT) ERR_Alloc ;
@@ -615,7 +609,7 @@ Write(*, Fmt_End) ;
 
 
 ! - SHUT DOWN PETSC ---------------------------------------------------------------------------------------------------------------------------------
-!Call PetscFinalize ( ErrHDF5 ) ;
+Call MPI_Finalize ( ErrHDF5 ) ;
 
 !#Read(*,*);
 STOP ;

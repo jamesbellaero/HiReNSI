@@ -255,15 +255,17 @@ CALL MPI_Comm_rank   ( PETSC_COMM_WORLD, RANK, IERR )
 write(*,*) 'size =', size, 'rank =', rank
 !==================================================================================================
 CALL CPU_TIME(t0)
-
 ! Read input files in parallel from PIC -------------------------------------------------------------------------------------------------------------
+!Include 'IO_Parallel_hdf5.F90'
 Include 'IO_Parallel_hdf5.F90'
+write(*,*) 'hello'
 Include 'Adjustments.F90'
 Include 'IO_Parallel_Inversion.F90'
+write(*,*) 'hello2'
 Include 'PETSc_Global_Objects.F90'
 Include 'PETSc_Global_Objects_Inversion.F90'
 Include 'Control_Problem_Operators.F90'
-
+write(*,*) 'hello3'
 
 
 !!========================================================
@@ -281,7 +283,8 @@ Include 'Control_Problem_Operators.F90'
 ! I- Initialize -------------------------------------------------------------------------------------------------------------------------------------<><><><><><><><><><><><><><><><><><><><>
 ! ---------------------------------------------------------------------------------------------------------------------------------------------------
 ! 1- material properties in Fortran vectors (for solving the forward problem): also, already in place in PMat_Lambda & PMat_Mu
-  If ( Iter_begin == 1 ) Then
+ write(*,*) 'abcde' 
+ If ( Iter_begin == 1 ) Then
     ! initial guess
     Select Case (Control_Parameter)
        Case ('Lambda')
@@ -299,13 +302,13 @@ Include 'Control_Problem_Operators.F90'
     ! Resume from the last save
     Include'Resume_Inversion_Read_Material.F90'
   End If
-
+write(*,*) 'abcdef'
 ! 1.1 We use mo = {Lambda + 2 Mu} instead of {Lambda} as the control variable. Moreover, we store {Lambda + 2 Mu} in variable {Lambda} to avoid creating a new variable. 
 !     for visualization though, we output {Lambda}.
   If ( Lambda_variable == 'Lambda_2Mu' ) Then
     PMat_Lambda = PMat_Lambda + 2.0d0 * PMat_Mu
   End If
-
+write(*,*) 'abc'
 ! 2- material properties in distributed PETSc vectors (for computing the gradients)
 
 ! 2.1- transfer to sequential PETSc vectors
@@ -338,7 +341,7 @@ Include 'Control_Problem_Operators.F90'
   If ( Lambda_variable == 'Lambda_2Mu' ) Then
     PMat_Lambda = PMat_Lambda + 2.0d0 * PMat_Mu
   End If
-
+write(*,*) 'abcd'
 ! 5- Compute misfit
   Call Compute_Misfit ( B_mis_PETSC, NNDH, EqDis, U_Store_Mapping, NStore_Mapping, EqDis_MAP_U_Store_Numbers_Global, Dis_meas, Cost_Misfit )
 
@@ -368,6 +371,7 @@ Include 'Control_Problem_Operators.F90'
       Write ( * ,'(A146)') '--------------------------------------------------------------------------------------------------------------------------------------------------'
     End If
   End If
+
 
 ! ===================================================================================================================================================
 ! *** iterate until convergence: *** 

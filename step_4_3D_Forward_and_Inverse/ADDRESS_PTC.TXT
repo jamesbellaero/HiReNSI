@@ -1,15 +1,15 @@
 Model INPUT FILE NAME: (.TXT)
-'Inversion_3D_Ex16_HDF5'
+'Mesh'
 NUMBER OF ANALYSIS TYPE:
 63   2
 INPUT DIRECTORY:
-'/home/jamesbell/Research/Meshes/Mesh'
+'/home/jamesbell/Research/Meshes/Mesh/Output/Model'
 INTERNAL DIRECTORY:
-'/home/jamesbell/Research/Meshes/Mesh'
+'/home/jamesbell/Research/Meshes/Mesh/Output/Model'
 OUTPUT DIRECTORY:
-'/home/jamesbell/Research/Meshes/Mesh'
+'/home/jamesbell/Research/Meshes/Mesh/Output/Final'
 Analysis INPUT FILE NAME: (.TXT)
-'Mesh_Ans'
+'Mesh'
 
 
 

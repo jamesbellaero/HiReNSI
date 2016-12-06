@@ -424,9 +424,9 @@ End If ;
 
 tpwgts (:)   = 1.0/NParts ;
 ubvec  (:)   = 1.05 ;
-Poptions (0) = 0 ;  ! 0: defined parameteres 1: user defined parameters
-Poptions (1) = 0 ;  ! Timing 1
-Poptions (2) = 0 ; ! ???
+Poptions (1) = 0 ;  ! 0: defined parameteres 1: user defined parameters
+Poptions (2) = 0 ;  ! Timing 1
+Poptions (3) = 0 ; ! ???
 !Poptions (3) = PARMETIS_PSR_UNCOUPLED
 Write(*    ,*) 'End Subroutine < ParConvert >' ;
 Write(UnInf,*) 'End Subroutine < ParConvert >' ;

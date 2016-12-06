@@ -213,7 +213,7 @@ write(*,*) "Begin subroutine < InversionDS >"
         write(*,*) IParts,NPart(IJ)
       End If
     End Do
-    write(*,*) "abc"
+    
     ! Double check -------------------------------------------------------------------------------- $ $ $ $ $ $ $ $ $ $
     If ( Counter /= NJ_Mapping ) Then
        Write(*,*) ' Wrong in II Inv-DS '; Stop
@@ -275,7 +275,7 @@ write(*,*) "Begin subroutine < InversionDS >"
 
     ! Find which equation numbers need to be stored. ----------------------------------------------
     Allocate ( U_Store_Numbers_Global ( NStore_Mapping ), idx_u_from ( NStore_Rank ), idx_u_to ( NStore_Rank ) )
-    write(*,*) "abc"
+    
     ! Obtaining equation numbers of the nodes that need to be stored. -----------------------------
     Counter = 0_Lng ;
     Do IJ = 1_Lng, NJ ;

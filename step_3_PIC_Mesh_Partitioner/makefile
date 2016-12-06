@@ -13,7 +13,7 @@ info ::
 	@echo "  make SOURCE"
 	@echo "    where SOURCE is one of ${SOURCESF}"
 
-FFLAGS	    = -O2 -fPIC -I${METIS_DIR}/include -I${HDF5_DIR}/include -I${MPI_DIR}/include
+FFLAGS	    = -O2 -fPIC -I${METIS_DIR}include -I${HDF5_DIR}/include -I${MPI_DIR}/include -g -check all -fpe0 -traceback -debug extended
 FLINKER     = -ifort#/software/intel/impi/5.1.2.150/intel64/bin/mpiifort 
 CPPFLAGS    = 
 FPPFLAGS    =
@@ -47,7 +47,9 @@ OBJS        :=$(patsubst %.F90,%.o,$(SRC))
 SOURCESH     = ${METIS_DIR}/Lib/metis.h
 
 LIBS	    =  -lmpifort -lfmpich -lmetis -lmpi -lmpigf -lhdf5_fortran -lhdf5hl_fortran
-LIBDIR	    = -L${METIS_DIR}/build/Linux-x86_64/libmetis -L${HDF5_DIR}/lib -L${MPI_DIR}/lib -L/software/intel/impi/5.1.2.150/intel64/lib/
+#LIBDIR	    = -L${METIS_DIR}/Lib -L${HDF5_DIR}/lib -L${MPI_DIR}/lib -L/software/intel/impi/5.1.2.150/intel64/lib/
+LIBDIR      = -L${METIS_DIR}/build/Linux-x86_64/libmetis -L${HDF5_DIR}/lib -L${MPI_DIR}/lib -L/software/intel/impi/5.1.2.150/intel64/lib/
+
 
 MANSEC      = KSP
 #CLEANFILES = rhs.vtk solution.vtk

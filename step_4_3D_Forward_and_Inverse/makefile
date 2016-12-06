@@ -9,7 +9,7 @@ info ::
 	@echo "  make SOURCE"
 	@echo "    where SOURCE is one of ${SOURCESF}"
 
-FFLAGS	         = -O2
+FFLAGS	         = -O2 -debug extended -g -traceback
 CPPFLAGS         = 
 FPPFLAGS         =
 LOCDIR           =
