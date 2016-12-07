@@ -209,8 +209,6 @@ write(*,*) "Begin subroutine < InversionDS >"
         Counter = Counter + 1_Lng 
         idx_Mat_Extend_from ( Counter ) = Global_PETSc_Num ( Node_Mat_Mapping ( IJ ) )
         idx_Mat_Extend_to   ( Counter ) = Global_PETSc_Num (                  ( IJ ) )
-      else if(1==1) then
-        write(*,*) IParts,NPart(IJ)
       End If
     End Do
     

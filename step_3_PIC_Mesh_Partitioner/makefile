@@ -1,5 +1,5 @@
 #================================================================================================================
-#
+
 # Developer    : Babak Poursartip 
 #                The University of Texas at Austin, TX, USA
 # Code         : PIC (Partitioner and Input Creator)
@@ -47,8 +47,8 @@ OBJS        :=$(patsubst %.F90,%.o,$(SRC))
 SOURCESH     = ${METIS_DIR}/Lib/metis.h
 
 LIBS	    =  -lmpifort -lfmpich -lmetis -lmpi -lmpigf -lhdf5_fortran -lhdf5hl_fortran
-#LIBDIR	    = -L${METIS_DIR}/Lib -L${HDF5_DIR}/lib -L${MPI_DIR}/lib -L/software/intel/impi/5.1.2.150/intel64/lib/
-LIBDIR      = -L${METIS_DIR}/build/Linux-x86_64/libmetis -L${HDF5_DIR}/lib -L${MPI_DIR}/lib -L/software/intel/impi/5.1.2.150/intel64/lib/
+LIBDIR	    = -L${METIS_DIR}/Lib -L${HDF5_DIR}/lib -L${MPI_DIR}/lib -L/software/intel/impi/5.1.2.150/intel64/lib/
+#LIBDIR      = -L${METIS_DIR}/build/Linux-x86_64/libmetis -L${HDF5_DIR}/lib -L${MPI_DIR}/lib -L/software/intel/impi/5.1.2.150/intel64/lib/
 
 
 MANSEC      = KSP

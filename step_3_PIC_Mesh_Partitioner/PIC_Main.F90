@@ -327,7 +327,7 @@ write(*,*)'-----------------before Metis', MetisType, NumFlag
 
 !allocate (eind2(0:Neind-1) , NPart ( 0:NJG-1 ))
        allocate (eind2(Neind) , NPart ( NJG ))
-      write(*,*) size(Vwgt),size(VSize),size(tpwgts);
+      !write(*,*) size(Vwgt),size(VSize),size(tpwgts);
        eind2 = eind(1:Neind) ;
    
 
@@ -385,7 +385,7 @@ Allocate ( NEL_Rank ( NParts ), NJ_Rank ( NParts ), Global_PETSc_Num ( NJ ), Loc
 
 ! Obtaining local node and element numbers for each rank. Renumbering equation numbers to get PETSc numbering.
 NNeighbor = 6 ;
-write(*,*) NJ, NDOF
+
 Call Numbering    (                                                                                                             &
 MaxNNode, NDOF, NNeighbor, NParts, NEL, NJ, NEQMTotal,                                                                          & ! Integer Variables
 !                                                                                                                               & ! Real Variables
